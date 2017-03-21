@@ -13,8 +13,8 @@ document.body.appendChild(renderer.view);
 var stage = new PIXI.Container();
 stage.interactive = true;
 
-var boardGraphics = new PIXI.Graphics();
 function drawBoard() {
+  var boardGraphics = new PIXI.Graphics();
   boardGraphics.beginFill(0xFFFFFF);
   boardGraphics.lineStyle(2, 0xFF0000);
 
@@ -26,18 +26,26 @@ function drawBoard() {
   stage.addChild(boardGraphics);
 }
 
+function circleTexture() {
+  var graphic = new PIXI.Graphics();
+  graphic.beginFill(0x000000);
+  circle = graphic.drawCircle(0, 0, (TILE_SIZE / 2) - 5);
+  return circle.generateCanvasTexture();
+}
+
+var circle = circleTexture();
 
 function drawToken(x, y) {
-  var graphics = new PIXI.Graphics();
-  graphics.interactive = true;
-  graphics.beginFill(0x000000);
+  sprite = new PIXI.Sprite(circle);
+  sprite.anchor.set(0.5);
   position = tileToPixelPosition(x, y);
-  graphics.drawCircle(position[0], position[1], (TILE_SIZE / 2) - 5);
+  sprite.x = position[0];
+  sprite.y =  position[1];
+  sprite.interactive = true;
 
-  stage.addChild(graphics);
   var highlight;
-
-  graphics
+  stage.addChild(sprite);
+  sprite
     .on('mousedown', function(event) {
       this.data = event.data;
       this.dragging = true;
@@ -47,27 +55,25 @@ function drawToken(x, y) {
     })
     .on('mouseup', function() {
       var newPosition = this.data.getLocalPosition(this.parent);
-      ptt = pixelToTilePosition(newPosition.x, newPosition.y)
-      ttp = tileToPixelPosition(ptt[0], ptt[1])
+      var ptt = pixelToTilePosition(newPosition.x, newPosition.y)
+      var ttp = tileToPixelPosition(ptt[0], ptt[1])
       stage.removeChild(highlight);
 
-      this.position.x = ttp[0] - (TILE_SIZE * 1.5);
-      this.position.y = ttp[1] - (TILE_SIZE * 1.5);
+      this.position.x = ttp[0];
+      this.position.y = ttp[1];
       this.dragging = false;
       this.data = null;
     })
    .on('mousemove', function() {
       if (this.dragging) {
         var newPosition = this.data.getLocalPosition(this.parent);
-        offsetXPosition = newPosition.x - (TILE_SIZE * 1.5)
-        offsetYPosition = newPosition.y - (TILE_SIZE * 1.5)
-        this.position.x = offsetXPosition;
-        this.position.y = offsetYPosition;
+        this.position.x = newPosition.x;
+        this.position.y = newPosition.y;
 
         stage.removeChild(highlight);
         highlight = highlightTile(newPosition.x, newPosition.y);
         stage.addChild(highlight);
-        stage.addChild(graphics);
+        stage.addChild(this);
       }
     })
 }
@@ -76,7 +82,7 @@ function highlightTile(x, y) {
   var highlightGraphic = new PIXI.Graphics();
   highlightGraphic.beginFill(0xCCCCCC);
   highlightGraphic.lineStyle(2, 0xFF0000);
-  tilePosition = pixelToTilePosition(x, y);
+  var tilePosition = pixelToTilePosition(x, y);
   highlightGraphic.drawRect(
     tilePosition[0] * TILE_SIZE,
     tilePosition[1] * TILE_SIZE,
@@ -96,9 +102,10 @@ function pixelToTilePosition(x, y) {
 
 function animate() {
   renderer.render(stage);
-  requestAnimationFrame(animate)
+  window.requestAnimationFrame(animate)
 }
 
 drawBoard(6, 6, TILE_SIZE);
-drawToken(1, 2);
+sprite = drawToken(1, 1);
+sprite2 = drawToken(2, 2);
 animate();
