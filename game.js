@@ -1,6 +1,7 @@
 var PIXI = require('pixi.js')
 var Config = require('./config.js')
 var Player = require('./player.js')
+var GameState = require('./game-state.js')
 
 const BOARD_HEIGHT = Config.BOARD_HEIGHT
 const BOARD_WIDTH = Config.BOARD_WIDTH
@@ -12,7 +13,30 @@ var renderer = PIXI.autoDetectRenderer(
     { antialias: true }
 )
 
+var gameState = new GameState()
+
 document.body.appendChild(renderer.view)
+
+var gameState = {
+  blueTeam: [
+    { x: 0, y: 0 },
+    { x: 0, y: 2 },
+    { x: 0, y: 4 },
+    { x: 0, y: 6 }
+  ],
+  redTeam: [
+    { x: 6, y: 0 },
+    { x: 6, y: 2 },
+    { x: 6, y: 4 },
+    { x: 6, y: 6 }
+  ],
+  balls: [
+    { x: 3, y: 0 },
+    { x: 3, y: 2 },
+    { x: 3, y: 4 },
+    { x: 3, y: 6 }
+  ]
+}
 
 var stage = new PIXI.Container()
 stage.interactive = true
@@ -45,38 +69,25 @@ function animate () {
   window.requestAnimationFrame(animate)
 }
 
-var blueTokens = [[0, 0], [0, 2], [0, 4], [0, 6]]
-var redTokens = [
-  [BOARD_WIDTH - 1, 0],
-  [BOARD_WIDTH - 1, 2],
-  [BOARD_WIDTH - 1, 4],
-  [BOARD_WIDTH - 1, 6]
-]
-var greenTokens = [
-  [3, 0],
-  [3, 2],
-  [3, 4],
-  [3, 6]
-]
 
 function setup () {
   drawBoard(BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE)
-  var player
-  for (var k = 0; k < blueTokens.length; k++) {
-    player = new Player(blueTokens[k][0], blueTokens[k][1], 'blue', true)
+
+  gameState.blueTeam.forEach(function(p, id) {
+    var player = new Player(p.x, p.y, id, 'blue', true)
     blueTeam.addChild(player)
-  }
+  })
 
-  for (var l = 0; l < redTokens.length; l++) {
-    player = new Player(redTokens[l][0], redTokens[l][1], 'red', true)
+  gameState.redTeam.forEach(function(p, id) {
+    var player = new Player(p.x, p.y, id, 'red', true)
     redTeam.addChild(player)
-  }
+  })
 
-  for (var m = 0; m < greenTokens.length; m++) {
-    var ball = new Player(greenTokens[m][0], greenTokens[m][1], 'green', false)
+  gameState.balls.forEach(function(p, id) {
+    var ball = new Player(p.x, p.y, id, 'green', false)
     balls.addChild(ball)
-  }
-  //stage.addChild(highlightContainer)
+  })
+
   stage.addChild(balls)
   stage.addChild(redTeam)
   stage.addChild(blueTeam)
