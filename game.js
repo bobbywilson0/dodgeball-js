@@ -1,7 +1,9 @@
 var PIXI = require('pixi.js')
-var Config = require('./config.js')
-var Player = require('./player.js')
-var GameState = require('./game-state.js')
+var _ = require('lodash')
+var Config = require('./config')
+var Utils = require('./utils')
+import Player from './player'
+import GameState from './game-state'
 
 const BOARD_HEIGHT = Config.BOARD_HEIGHT
 const BOARD_WIDTH = Config.BOARD_WIDTH
@@ -13,30 +15,7 @@ var renderer = PIXI.autoDetectRenderer(
     { antialias: true }
 )
 
-var gameState = new GameState()
-
 document.body.appendChild(renderer.view)
-
-var gameState = {
-  blueTeam: [
-    { x: 0, y: 0 },
-    { x: 0, y: 2 },
-    { x: 0, y: 4 },
-    { x: 0, y: 6 }
-  ],
-  redTeam: [
-    { x: 6, y: 0 },
-    { x: 6, y: 2 },
-    { x: 6, y: 4 },
-    { x: 6, y: 6 }
-  ],
-  balls: [
-    { x: 3, y: 0 },
-    { x: 3, y: 2 },
-    { x: 3, y: 4 },
-    { x: 3, y: 6 }
-  ]
-}
 
 var stage = new PIXI.Container()
 stage.interactive = true
@@ -45,6 +24,45 @@ var blueTeam = new PIXI.Container()
 var redTeam = new PIXI.Container()
 var balls = new PIXI.Container()
 //var highlightContainer = new PIXI.Container()
+//
+var tiles = {
+  turn: 'blueTeam',
+  blueTeam: {
+    '1': { x: 0, y: 0 },
+    '2': { x: 0, y: 2 },
+    '3': { x: 0, y: 4 },
+    '4': { x: 0, y: 6 }
+  },
+  redTeam: {
+    '1':{ x: 6, y: 0 },
+    '2':{ x: 6, y: 2 },
+    '3':{ x: 6, y: 4 },
+    '4':{ x: 6, y: 6 }
+  },
+  balls: {
+    '1': { x: 3, y: 0 },
+    '2': { x: 3, y: 2 },
+    '3': { x: 3, y: 4 },
+    '4': { x: 3, y: 6 }
+  }
+}
+
+var gameState = new GameState(tiles)
+var currentPlayer
+
+stage
+  .on('mousedown', function (event) {
+    this.data = event.data
+    this.dragging = true
+    var position = this.data.getLocalPosition(this)
+    currentPlayer = gameState.getPlayerId(position.x, position.y)
+  })
+  .on('mouseup', function() {
+    var newPosition = this.data.getLocalPosition(this)
+    var ptt = Utils.pixelToTilePosition(newPosition.x, newPosition.y)
+    gameState.movePlayer(currentPlayer, ptt[0], ptt[1])
+    currentPlayer = null
+  })
 
 function drawBoard () {
   var boardGraphics = new PIXI.Graphics()
@@ -69,21 +87,20 @@ function animate () {
   window.requestAnimationFrame(animate)
 }
 
-
 function setup () {
   drawBoard(BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE)
 
-  gameState.blueTeam.forEach(function(p, id) {
+  _.forEach(gameState.state.blueTeam, function(p, id) {
     var player = new Player(p.x, p.y, id, 'blue', true)
     blueTeam.addChild(player)
   })
 
-  gameState.redTeam.forEach(function(p, id) {
+  _.forEach(gameState.state.redTeam, function(p, id) {
     var player = new Player(p.x, p.y, id, 'red', true)
     redTeam.addChild(player)
   })
 
-  gameState.balls.forEach(function(p, id) {
+  _.forEach(gameState.state.balls, function(p, id) {
     var ball = new Player(p.x, p.y, id, 'green', false)
     balls.addChild(ball)
   })

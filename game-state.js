@@ -1,29 +1,29 @@
-var gameState = {
-  blueTeam: {
-    '1': { x: 0, y: 0 },
-    '2': { x: 0, y: 2 },
-    '3': { x: 0, y: 4 },
-    '4': { x: 0, y: 6 }
-  },
-  redTeam: {
-    '1':{ x: 6, y: 0 },
-    '2':{ x: 6, y: 2 },
-    '3':{ x: 6, y: 4 },
-    '4':{ x: 6, y: 6 }
-  },
-  balls: {
-    '1': { x: 3, y: 0 },
-    '2': { x: 3, y: 2 },
-    '3': { x: 3, y: 4 },
-    '4': { x: 3, y: 6 }
+let Utils = require('./utils')
+
+class GameState {
+  constructor(tiles) {
+    this.state = tiles
+  }
+
+  movePlayer (playerId, x, y) {
+    let activeTeam = this.state[this.state.turn]
+    activeTeam[playerId].x = x
+    activeTeam[playerId].y = y
+  }
+
+  getPlayerId (x, y) {
+    let activeTeam = this.state[this.state.turn]
+    let state = this.state
+    let playerId
+    _.each(activeTeam, function(v, k) {
+      let ptt = Utils.pixelToTilePosition(x, y)
+      if (v.x === ptt[0] && v.y === ptt[1]) {
+        playerId = k
+      }
+    })
+    return playerId
   }
 }
 
-function movePlayer (player, x, y) {
-  gameState[player.team][player.id].x = x
-  gameState[player.team][player.id].y = y
-}
+export default GameState
 
-module.exports = function() {
-  return gameState
-} 

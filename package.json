@@ -11,11 +11,15 @@
   "dependencies": {
     "brfs": "^1.4.1",
     "json-loader": "^0.5.4",
+    "lodash": "^4.17.4",
     "pixi.js": "^4.0.8",
     "transform-loader": "^0.2.3",
-    "webpack": "^2.2.0"
+    "webpack": "^2.2.1"
   },
   "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.2.2",
     "eslint": "^3.18.0",
     "eslint-config-standard": "^7.1.0",
     "eslint-plugin-promise": "^3.5.0",
