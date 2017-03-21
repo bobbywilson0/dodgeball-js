@@ -13,6 +13,11 @@ document.body.appendChild(renderer.view)
 var stage = new PIXI.Container()
 stage.interactive = true
 
+var blueTeam = new PIXI.Container()
+var redTeam = new PIXI.Container()
+var balls = new PIXI.Container()
+var highlightContainer = new PIXI.Container()
+
 function drawBoard () {
   var boardGraphics = new PIXI.Graphics()
   boardGraphics.beginFill(0xFFFFFF)
@@ -59,16 +64,33 @@ var redCircle = redCircleTexture()
 var blueCircle = blueCircleTexture()
 var greenCircle = greenCircleTexture()
 
-function drawToken (x, y, graphic) {
+function drawToken (x, y, token, interactive) {
+  var graphic
+  if (token === 'blue') {
+    graphic = blueCircle
+  } else if (token === 'red') {
+    graphic = redCircle
+  } else if (token === 'green') {
+    graphic = greenCircle
+  }
+
   var sprite = new PIXI.Sprite(graphic)
   sprite.anchor.set(0.5)
   var position = tileToPixelPosition(x, y)
   sprite.x = position[0]
   sprite.y = position[1]
-  sprite.interactive = true
+  sprite.interactive = interactive
 
   var highlight
-  stage.addChild(sprite)
+
+  if (token === 'blue') {
+    blueTeam.addChild(sprite)
+  } else if (token === 'red') {
+    redTeam.addChild(sprite)
+  } else if (token === 'green') {
+    balls.addChild(sprite)
+  }
+
   sprite
     .on('mousedown', function (event) {
       this.data = event.data
@@ -94,10 +116,9 @@ function drawToken (x, y, graphic) {
        this.position.x = newPosition.x
        this.position.y = newPosition.y
 
-       stage.removeChild(highlight)
+       highlightContainer.removeChild(highlight)
        highlight = highlightTile(newPosition.x, newPosition.y)
-       stage.addChild(highlight)
-       stage.addChild(this)
+       highlightContainer.addChild(highlight)
      }
    })
 }
@@ -146,18 +167,25 @@ var greenTokens = [
   [3, 6]
 ]
 
-drawBoard(BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE)
+function setup () {
+  drawBoard(BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE)
 
-for (var k = 0; k < blueTokens.length; k++) {
-  drawToken(blueTokens[k][0], blueTokens[k][1], blueCircle)
+  for (var k = 0; k < blueTokens.length; k++) {
+    drawToken(blueTokens[k][0], blueTokens[k][1], 'blue', true)
+  }
+
+  for (var l = 0; l < redTokens.length; l++) {
+    drawToken(redTokens[l][0], redTokens[l][1], 'red', true)
+  }
+
+  for (var m = 0; m < greenTokens.length; m++) {
+    drawToken(greenTokens[m][0], greenTokens[m][1], 'green', false)
+  }
+  stage.addChild(highlightContainer)
+  stage.addChild(balls)
+  stage.addChild(redTeam)
+  stage.addChild(blueTeam)
 }
 
-for (var l = 0; l < redTokens.length; l++) {
-  drawToken(redTokens[l][0], redTokens[l][1], redCircle)
-}
-
-for (var m = 0; m < greenTokens.length; m++) {
-  drawToken(greenTokens[m][0], greenTokens[m][1], greenCircle)
-}
-
+setup()
 animate()
