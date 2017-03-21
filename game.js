@@ -1,7 +1,7 @@
 var PIXI = require('pixi.js')
 const TILE_SIZE = 70
 const BOARD_WIDTH = 7
-const BOARD_HEIGHT = 6
+const BOARD_HEIGHT = 7
 var renderer = PIXI.autoDetectRenderer(
     BOARD_WIDTH * TILE_SIZE,
     BOARD_HEIGHT * TILE_SIZE,
@@ -47,8 +47,17 @@ function blueCircleTexture () {
     .generateCanvasTexture()
 }
 
+function greenCircleTexture () {
+  var graphic = new PIXI.Graphics()
+  graphic.beginFill(0x00FF00)
+  return graphic
+    .drawCircle(0, 0, (TILE_SIZE / 2) - 5)
+    .generateCanvasTexture()
+}
+
 var redCircle = redCircleTexture()
 var blueCircle = blueCircleTexture()
+var greenCircle = greenCircleTexture()
 
 function drawToken (x, y, graphic) {
   var sprite = new PIXI.Sprite(graphic)
@@ -109,7 +118,7 @@ function highlightTile (x, y) {
 
 function tileToPixelPosition (x, y) {
   return [
-    (x * TILE_SIZE) + (TILE_SIZE / 2), 
+    (x * TILE_SIZE) + (TILE_SIZE / 2),
     (y * TILE_SIZE) + (TILE_SIZE / 2)
   ]
 }
@@ -123,7 +132,32 @@ function animate () {
   window.requestAnimationFrame(animate)
 }
 
-drawBoard(6, 6, TILE_SIZE)
-drawToken(1, 1, redCircle)
-drawToken(2, 2, blueCircle)
+var blueTokens = [[0, 0], [0, 2], [0, 4], [0, 6]]
+var redTokens = [
+  [BOARD_WIDTH - 1, 0],
+  [BOARD_WIDTH - 1, 2],
+  [BOARD_WIDTH - 1, 4],
+  [BOARD_WIDTH - 1, 6]
+]
+var greenTokens = [
+  [3, 0],
+  [3, 2],
+  [3, 4],
+  [3, 6]
+]
+
+drawBoard(BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE)
+
+for (var k = 0; k < blueTokens.length; k++) {
+  drawToken(blueTokens[k][0], blueTokens[k][1], blueCircle)
+}
+
+for (var l = 0; l < redTokens.length; l++) {
+  drawToken(redTokens[l][0], redTokens[l][1], redCircle)
+}
+
+for (var m = 0; m < greenTokens.length; m++) {
+  drawToken(greenTokens[m][0], greenTokens[m][1], greenCircle)
+}
+
 animate()
