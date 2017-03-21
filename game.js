@@ -80,6 +80,7 @@ function drawToken (x, y, token, interactive) {
   sprite.x = position[0]
   sprite.y = position[1]
   sprite.interactive = interactive
+  sprite.buttonMode = interactive
 
   var highlight
 
@@ -103,7 +104,7 @@ function drawToken (x, y, token, interactive) {
       var newPosition = this.data.getLocalPosition(this.parent)
       var ptt = pixelToTilePosition(newPosition.x, newPosition.y)
       var ttp = tileToPixelPosition(ptt[0], ptt[1])
-      stage.removeChild(highlight)
+      highlightContainer.removeChild(highlight)
 
       this.position.x = ttp[0]
       this.position.y = ttp[1]
