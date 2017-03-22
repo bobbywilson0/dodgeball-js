@@ -5,6 +5,10 @@ class GameState {
     this.state = tiles
   }
 
+  getCurrentPlayer () {
+    return this.state.turn
+  }
+
   movePlayer (playerId, x, y) {
     if (playerId != undefined) {
       let activeTeam = this.state[this.state.turn]

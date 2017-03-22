@@ -20,11 +20,13 @@ document.body.appendChild(renderer.view)
 var stage = new PIXI.Container()
 stage.interactive = true
 
-var blueTeam = new PIXI.Container()
-var redTeam = new PIXI.Container()
-var balls = new PIXI.Container()
-//var highlightContainer = new PIXI.Container()
-//
+var tokenContainer = new PIXI.Container()
+let players = {
+  'blueTeam': {},
+  'redTeam': {}
+}
+var balls = {}
+
 var tiles = {
   turn: 'blueTeam',
   blueTeam: {
@@ -48,21 +50,71 @@ var tiles = {
 }
 
 var gameState = new GameState(tiles)
-var currentPlayer
+var highlightContainer = new PIXI.Container()
 
 stage
-  .on('mousedown', function (event) {
+  .on('click', function (event) {
+    highlightContainer.removeChild(this.targetHighlight)
     this.data = event.data
-    this.dragging = true
     var position = this.data.getLocalPosition(this)
-    currentPlayer = gameState.getPlayerId(position.x, position.y)
+    let playerOnTile = gameState.getPlayerId(position.x, position.y)
+    if ((this.selected === undefined || this.selected === false) && playerOnTile != undefined) {
+      this.selected = true
+      this.currentPlayer = gameState.getPlayerId(position.x, position.y)
+      let newPosition = this.data.getLocalPosition(this)
+      this.sourceHighlight = highlightSourceTile(newPosition.x, newPosition.y)
+      highlightContainer.addChild(this.sourceHighlight)
+    } else if (this.selected === true) {
+      let newPosition = this.data.getLocalPosition(this)
+      let ptt = Utils.pixelToTilePosition(newPosition.x, newPosition.y)
+      gameState.movePlayer(this.currentPlayer, ptt[0], ptt[1])
+      let newPos = Utils.tileToPixelPosition(ptt[0], ptt[1])
+      let sprite = players[gameState.getCurrentPlayer()][this.currentPlayer].sprite
+      sprite.x = newPos[0]
+      sprite.y = newPos[1]
+      this.currentPlayer = null
+      highlightContainer.removeChild(this.sourceHighlight)
+      this.selected = false
+    }
   })
-  .on('mouseup', function() {
-    var newPosition = this.data.getLocalPosition(this)
-    var ptt = Utils.pixelToTilePosition(newPosition.x, newPosition.y)
-    gameState.movePlayer(currentPlayer, ptt[0], ptt[1])
-    currentPlayer = null
+  .on('mousemove', function() {
+    if (this.selected === true && this.currentPlayer != undefined) {
+      let newPosition = this.data.getLocalPosition(this)
+      if (this.targetHighlight) {
+        highlightContainer.removeChild(this.targetHighlight)
+      }
+      this.targetHighlight = highlightTargetTile(newPosition.x, newPosition.y)
+      highlightContainer.addChild(this.targetHighlight)
+    }
   })
+
+  function highlightTargetTile (x, y) {
+    let highlightGraphic = new PIXI.Graphics()
+    highlightGraphic.beginFill(0xCCCCCC)
+    highlightGraphic.lineStyle(2, 0x000000)
+    let tilePosition = Utils.pixelToTilePosition(x, y)
+    highlightGraphic.drawRect(
+      tilePosition[0] * Config.TILE_SIZE,
+      tilePosition[1] * Config.TILE_SIZE,
+      Config.TILE_SIZE,
+      Config.TILE_SIZE
+    )
+    return highlightGraphic
+  }
+
+ function highlightSourceTile (x, y) {
+   let highlightGraphic = new PIXI.Graphics()
+   highlightGraphic.beginFill(0x999999)
+   highlightGraphic.lineStyle(2, 0x000000)
+   let tilePosition = Utils.pixelToTilePosition(x, y)
+   highlightGraphic.drawRect(
+     tilePosition[0] * Config.TILE_SIZE,
+     tilePosition[1] * Config.TILE_SIZE,
+     Config.TILE_SIZE,
+     Config.TILE_SIZE
+   )
+   return highlightGraphic
+ }
 
 function drawBoard () {
   var boardGraphics = new PIXI.Graphics()
@@ -92,22 +144,24 @@ function setup () {
 
   _.forEach(gameState.state.blueTeam, function(p, id) {
     var player = new Player(p.x, p.y, id, 'blue', true)
-    blueTeam.addChild(player)
+    tokenContainer.addChild(player.sprite)
+    players['blueTeam'][id] = player
   })
 
   _.forEach(gameState.state.redTeam, function(p, id) {
     var player = new Player(p.x, p.y, id, 'red', true)
-    redTeam.addChild(player)
+    tokenContainer.addChild(player.sprite)
+    players['redTeam'][id] = player
   })
 
   _.forEach(gameState.state.balls, function(p, id) {
     var ball = new Player(p.x, p.y, id, 'green', false)
-    balls.addChild(ball)
+    tokenContainer.addChild(ball.sprite)
+    balls[id] = ball
   })
 
-  stage.addChild(balls)
-  stage.addChild(redTeam)
-  stage.addChild(blueTeam)
+  stage.addChild(highlightContainer)
+  stage.addChild(tokenContainer)
 }
 
 setup()
