@@ -6,9 +6,11 @@ class GameState {
   }
 
   movePlayer (playerId, x, y) {
-    let activeTeam = this.state[this.state.turn]
-    activeTeam[playerId].x = x
-    activeTeam[playerId].y = y
+    if (playerId != undefined) {
+      let activeTeam = this.state[this.state.turn]
+      activeTeam[playerId].x = x
+      activeTeam[playerId].y = y
+    }
   }
 
   getPlayerId (x, y) {
