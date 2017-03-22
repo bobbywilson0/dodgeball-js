@@ -1,5 +1,5 @@
 short term:
-  - click token, click tile to place
+  X click token, click tile to place
   - check if token is on ball
   - show menu for ball pickup
   - switch turns after two actions

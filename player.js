@@ -4,8 +4,8 @@ const Utils = require('./utils')
 class Player {
 
   constructor(x, y, id, team, interactive) {
-    let redCircle = this.circleTexture(0xFF0000)
-    let blueCircle = this.circleTexture(0x0000FF)
+    let redCircle = this.rectangleTexture(0xFF0000)
+    let blueCircle = this.rectangleTexture(0x0000FF)
     let greenCircle = this.circleTexture(0x00FF00)
 
     let graphic
@@ -27,13 +27,21 @@ class Player {
       sprite.buttonMode = interactive
     this.sprite = sprite
   }
+  
+  rectangleTexture (hexColor) {
+    let graphic = new PIXI.Graphics()
+    graphic.beginFill(hexColor)
+      return graphic
+      .drawRect(0, 0, 20, 50)
+      .generateCanvasTexture()
+  }
 
   
   circleTexture (hexColor) {
     let graphic = new PIXI.Graphics()
     graphic.beginFill(hexColor)
       return graphic
-      .drawCircle(0, 0, (Config.TILE_SIZE / 2) - 5)
+      .drawCircle(0, 0, (Config.TILE_SIZE / 4) - 5)
       .generateCanvasTexture()
   }
 }
