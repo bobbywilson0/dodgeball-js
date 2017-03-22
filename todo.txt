@@ -4,6 +4,7 @@ short term:
   - show menu for ball pickup
   - switch turns after two actions
   - limit token movement
+  - tween movement
 
 big stuff:
   - attacking

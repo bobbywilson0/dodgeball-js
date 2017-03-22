@@ -12,15 +12,15 @@ class GameBoard {
     this.drawBoard(Config.BOARD_WIDTH, Config.BOARD_HEIGHT, Config.TILE_SIZE)
     stage.addChild(this.highlightContainer)
     stage.addChild(this.tokenContainer)
-  
+
     this.eventData = null
     this.selected = undefined
     this.currentPlayer = null
-    
+
     stage.on('click', (event) => {
       this.highlightContainer.removeChild(this.targetHighlight)
       this.eventData = event.data
-      var position = this.eventData.getLocalPosition(stage)
+      let position = this.eventData.getLocalPosition(stage)
       let playerOnTile = gameState.getPlayerId(position.x, position.y)
       if ((this.selected === undefined || this.selected === false) && playerOnTile != undefined) {
         this.selected = true
@@ -41,7 +41,8 @@ class GameBoard {
         this.selected = false
       }
     })
-    stage.on('mousemove', () => { 
+
+    stage.on('mousemove', () => {
       if (this.selected === true && this.currentPlayer != undefined) {
         let newPosition = this.eventData.getLocalPosition(stage)
         if (this.targetHighlight) {
@@ -49,7 +50,7 @@ class GameBoard {
         }
         this.targetHighlight = this.highlightTargetTile(newPosition.x, newPosition.y)
         this.highlightContainer.addChild(this.targetHighlight)
-      }  
+      }
     })
   }
 
@@ -82,12 +83,12 @@ class GameBoard {
   }
 
   drawBoard () {
-    var boardGraphics = new PIXI.Graphics()
+    let boardGraphics = new PIXI.Graphics()
     boardGraphics.beginFill(0xFFFFFF)
     boardGraphics.lineStyle(2, 0x333333)
-  
-    for (var i = 0; i < Config.BOARD_WIDTH; ++i) {
-      for (var j = 0; j < Config.BOARD_HEIGHT; ++j) {
+
+    for (let i = 0; i < Config.BOARD_WIDTH; ++i) {
+      for (let j = 0; j < Config.BOARD_HEIGHT; ++j) {
         boardGraphics.drawRect(
           i * Config.TILE_SIZE,
           j * Config.TILE_SIZE,
