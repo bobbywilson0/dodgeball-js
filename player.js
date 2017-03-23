@@ -6,7 +6,6 @@ class Player {
   constructor(x, y, id, team, interactive) {
     let redCircle = this.rectangleTexture(0xFF0000)
     let blueCircle = this.rectangleTexture(0x0000FF)
-    let greenCircle = this.circleTexture(0x00FF00)
 
     let graphic
 
@@ -14,17 +13,18 @@ class Player {
       graphic = blueCircle
     } else if (team === 'red') {
       graphic = redCircle
-    } else if (team === 'green') {
-      graphic = greenCircle
     }
 
     let sprite = new PIXI.Sprite(graphic)
-      sprite.anchor.set(0.5)
-      let position = Utils.tileToPixelPosition(x, y)
-      sprite.x = position[0]
-      sprite.y = position[1]
-      sprite.interactive = interactive
-      sprite.buttonMode = interactive
+    let head = new PIXI.Sprite(this.headTexture())
+    head.anchor.set(0.5, 1.2)
+    sprite.anchor.set(0.5)
+    let position = Utils.tileToPixelPosition(x, y)
+    sprite.x = position[0]
+    sprite.y = position[1]
+    sprite.interactive = interactive
+    sprite.buttonMode = interactive
+    sprite.addChild(head)
 
     let textStyle = new PIXI.TextStyle({
       fontSize: 13,
@@ -37,7 +37,7 @@ class Player {
 
     this.sprite = sprite
   }
-  
+
   rectangleTexture (hexColor) {
     let graphic = new PIXI.Graphics()
     graphic.beginFill(hexColor)
@@ -46,14 +46,16 @@ class Player {
       .generateCanvasTexture()
   }
 
-  
-  circleTexture (hexColor) {
+  headTexture () {
+    let skinTones = [0x8d5524, 0xc68642, 0xe0ac69, 0xf1c27d, 0xffdbac]
     let graphic = new PIXI.Graphics()
-    graphic.beginFill(hexColor)
+    let randomSkinTone = skinTones[Math.floor(Math.random() * skinTones.length)]
+    graphic.beginFill(randomSkinTone)
       return graphic
-      .drawCircle(0, 0, (Config.TILE_SIZE / 4) - 5)
+      .drawCircle(0, 0, 18)
       .generateCanvasTexture()
   }
+
 }
 
 export default Player

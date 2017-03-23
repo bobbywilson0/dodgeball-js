@@ -1,14 +1,17 @@
 short term:
-  X click token, click tile to place
+  X make ball separate from player
+  X add heads to players
   - check if player is on ball
-  X show number on player
   - show menu for ball pickup
-  - switch turns after two actions
+  - add actions
+    - switch turns after two actions
   - limit token movement
-  X tween movement
   - neutral zone tiles
-  X github page
   - debug info pane
+  X github page
+  X tween movement
+  X show number on player
+  X click token, click tile to place
 
 big stuff:
   - attacking

@@ -2,6 +2,7 @@ let PIXI = require('pixi.js')
 let _ = require('lodash')
 let Config = require('./config')
 import Player from './player'
+import Ball from './ball'
 import GameState from './game-state'
 import GameBoard from './game-board'
 
@@ -71,7 +72,7 @@ function setup () {
   })
 
   _.forEach(gameState.state.balls, function(p, id) {
-    let ball = new Player(p.x, p.y, id, 'green', false)
+    let ball = new Ball(p.x, p.y, id, 'green', false)
     gameBoard.addToken(ball.sprite)
     balls[id] = ball
   })
