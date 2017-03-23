@@ -32,7 +32,7 @@ let tiles = {
     '6': { x: 6, y: 2, type: 'player', team: 'red' },
     '7': { x: 6, y: 4, type: 'player', team: 'red' },
     '8': { x: 6, y: 6, type: 'player', team: 'red' },
-    '9': { x: 3, y: 0, type: 'player', team: 'ball' },
+    '9': { x: 3, y: 0, type: 'ball' },
     '10': { x: 3, y: 2, type: 'ball' },
     '11': { x: 3, y: 4, type: 'ball' },
     '12': { x: 3, y: 6, type: 'ball' }

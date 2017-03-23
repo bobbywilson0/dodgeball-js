@@ -60,6 +60,12 @@ class Player {
     TweenLite.to(this.sprite, 0.5, {x: x, y: y, ease: Back.easeOut.config(1.7)})
   }
 
+  pickupBall(ball) {
+    ball.sprite.x = -10 
+    ball.sprite.y = 0
+    this.sprite.addChild(ball.sprite)    
+  }
+
 }
 
 export default Player

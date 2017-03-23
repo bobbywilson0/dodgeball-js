@@ -20123,9 +20123,7 @@ var Ball = function () {
 
     this.sprite = sprite;
 
-    sprite.on('click', function (event) {
-      console.log(sprite);
-    });
+    sprite.on('click', function (event) {});
   }
 
   _createClass(Ball, [{
@@ -20199,21 +20197,33 @@ var GameBoard = function () {
     value: function handleClickEvent(event) {
       this.highlightContainer.removeChild(this.targetHighlight);
       this.eventData = event.data;
-      var newPosition = this.eventData.getLocalPosition(this.stage);
-      var position = this.eventData.getLocalPosition(this.stage);
-      var playerOnTile = this.gameState.getUnitId(position.x, position.y);
-      if ((this.selected === undefined || this.selected === false) && playerOnTile != undefined) {
+      var p = this.eventData.getLocalPosition(this.stage);
+      var playerId = this.gameState.getPlayerId(p.x, p.y);
+      if ((this.selected === undefined || this.selected === false) && playerId != undefined) {
         this.selected = true;
-        this.currentPlayer = this.gameState.getUnitId(position.x, position.y);
-        this.sourceHighlight = this.highlightSourceTile(newPosition.x, newPosition.y);
+        var position = this.eventData.getLocalPosition(this.stage);
+        this.currentPlayerId = this.gameState.getPlayerId(position.x, position.y);
+        this.sourceHighlight = this.highlightSourceTile(position.x, position.y);
         this.highlightContainer.addChild(this.sourceHighlight);
       } else if (this.selected === true) {
-        var player = this.players[this.gameState.getCurrentPlayer()][this.currentPlayer];
-        var ptt = Utils.pixelToTilePosition(newPosition.x, newPosition.y);
-        this.gameState.movePlayer(this.currentPlayer, ptt[0], ptt[1]);
-        var newPos = Utils.tileToPixelPosition(ptt[0], ptt[1]);
-        player.moveTo(newPos[0], newPos[1]);
-        this.currentPlayer = null;
+        var _position = this.eventData.getLocalPosition(this.stage);
+        var ptt = Utils.pixelToTilePosition(_position.x, _position.y);
+
+        if (ptt[0] === this.gameState.state.units[this.currentPlayerId].x && ptt[1] === this.gameState.state.units[this.currentPlayerId].y) {
+          var ballId = this.gameState.getBallId(_position.x, _position.y);
+          var ball = this.balls[ballId];
+          if (ball) {
+            this.tokenContainer.removeChild(ball);
+            var player = this.players[this.gameState.getCurrentTeam()][this.currentPlayerId];
+            player.pickupBall(ball);
+          }
+        } else {
+          this.gameState.movePlayer(this.currentPlayerId, ptt[0], ptt[1]);
+          var newPos = Utils.tileToPixelPosition(ptt[0], ptt[1]);
+          var _player = this.players[this.gameState.getCurrentTeam()][this.currentPlayerId];
+          _player.moveTo(newPos[0], newPos[1]);
+        }
+        this.currentPlayerId = null;
         this.highlightContainer.removeChild(this.sourceHighlight);
         this.selected = false;
       }
@@ -20221,7 +20231,7 @@ var GameBoard = function () {
   }, {
     key: 'handleMouseMove',
     value: function handleMouseMove() {
-      if (this.selected === true && this.currentPlayer != undefined) {
+      if (this.selected === true && this.currentPlayerId != undefined) {
         var newPosition = this.eventData.getLocalPosition(this.stage);
         if (this.targetHighlight) {
           this.highlightContainer.removeChild(this.targetHighlight);
@@ -20301,8 +20311,8 @@ var GameState = function () {
   }
 
   _createClass(GameState, [{
-    key: 'getCurrentPlayer',
-    value: function getCurrentPlayer() {
+    key: 'getCurrentTeam',
+    value: function getCurrentTeam() {
       return this.state.turn;
     }
   }, {
@@ -20318,16 +20328,38 @@ var GameState = function () {
       }
     }
   }, {
-    key: 'getUnitId',
-    value: function getUnitId(x, y) {
-      var unitId = void 0;
-      _.each(this.state.units, function (v, k) {
-        var ptt = Utils.pixelToTilePosition(x, y);
-        if (v.x === ptt[0] && v.y === ptt[1]) {
-          unitId = k;
+    key: 'getBallId',
+    value: function getBallId(x, y) {
+      var _id = void 0;
+      _.each(this.getUnitsAt(x, y), function (unit, id) {
+        if (unit.type === 'ball') {
+          _id = id;
         }
       });
-      return unitId;
+      return _id;
+    }
+  }, {
+    key: 'getPlayerId',
+    value: function getPlayerId(x, y) {
+      var _id = void 0;
+      _.each(this.getUnitsAt(x, y), function (unit, id) {
+        if (unit.type === 'player') {
+          _id = id;
+        }
+      });
+      return _id;
+    }
+  }, {
+    key: 'getUnitsAt',
+    value: function getUnitsAt(x, y) {
+      var units = {};
+      _.each(this.state.units, function (unit, id) {
+        var ptt = Utils.pixelToTilePosition(x, y);
+        if (unit.x === ptt[0] && unit.y === ptt[1]) {
+          units[id] = unit;
+        }
+      });
+      return units;
     }
   }]);
 
@@ -20412,6 +20444,13 @@ var Player = function () {
     key: 'moveTo',
     value: function moveTo(x, y) {
       TweenLite.to(this.sprite, 0.5, { x: x, y: y, ease: Back.easeOut.config(1.7) });
+    }
+  }, {
+    key: 'pickupBall',
+    value: function pickupBall(ball) {
+      ball.sprite.x = -10;
+      ball.sprite.y = 0;
+      this.sprite.addChild(ball.sprite);
     }
   }]);
 
@@ -37684,7 +37723,7 @@ var tiles = {
     '6': { x: 6, y: 2, type: 'player', team: 'red' },
     '7': { x: 6, y: 4, type: 'player', team: 'red' },
     '8': { x: 6, y: 6, type: 'player', team: 'red' },
-    '9': { x: 3, y: 0, type: 'player', team: 'ball' },
+    '9': { x: 3, y: 0, type: 'ball' },
     '10': { x: 3, y: 2, type: 'ball' },
     '11': { x: 3, y: 4, type: 'ball' },
     '12': { x: 3, y: 6, type: 'ball' }

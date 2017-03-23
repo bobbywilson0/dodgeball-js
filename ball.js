@@ -29,7 +29,6 @@ class Ball {
 
 
     sprite.on('click', (event) => {
-      console.log(sprite)
     })
   }
 

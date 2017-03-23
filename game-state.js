@@ -5,7 +5,7 @@ class GameState {
     this.state = tiles
   }
 
-  getCurrentPlayer () {
+  getCurrentTeam () {
     return this.state.turn
   }
 
@@ -20,15 +20,35 @@ class GameState {
     }
   }
 
-  getUnitId (x, y) {
-    let unitId
-    _.each(this.state.units, function(v, k) {
-      let ptt = Utils.pixelToTilePosition(x, y)
-      if (v.x === ptt[0] && v.y === ptt[1]) {
-        unitId = k
+  getBallId(x, y) {
+    let _id
+    _.each(this.getUnitsAt(x, y), (unit, id) => {
+      if (unit.type === 'ball') {
+        _id = id
       }
     })
-    return unitId
+    return _id
+  }
+
+  getPlayerId(x, y) {
+    let _id
+    _.each(this.getUnitsAt(x, y), (unit, id) => {
+      if (unit.type === 'player') {
+        _id = id
+      }
+    })
+    return _id
+  }
+
+  getUnitsAt (x, y) {
+    let units = {}
+    _.each(this.state.units, function(unit, id) {
+      let ptt = Utils.pixelToTilePosition(x, y)
+      if (unit.x === ptt[0] && unit.y === ptt[1]) {
+        units[id] = unit
+      }
+    })
+    return units
   }
 }
 

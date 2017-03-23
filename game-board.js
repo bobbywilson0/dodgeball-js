@@ -28,28 +28,40 @@ class GameBoard {
   handleClickEvent (event) {
     this.highlightContainer.removeChild(this.targetHighlight)
     this.eventData = event.data
-    let newPosition = this.eventData.getLocalPosition(this.stage)
-    let position = this.eventData.getLocalPosition(this.stage)
-    let playerOnTile = this.gameState.getUnitId(position.x, position.y)
-    if ((this.selected === undefined || this.selected === false) && playerOnTile != undefined) {
+    let p = this.eventData.getLocalPosition(this.stage)
+    let playerId = this.gameState.getPlayerId(p.x, p.y)
+    if ((this.selected === undefined || this.selected === false) && playerId != undefined) {
       this.selected = true
-      this.currentPlayer = this.gameState.getUnitId(position.x, position.y)
-      this.sourceHighlight = this.highlightSourceTile(newPosition.x, newPosition.y)
+      let position = this.eventData.getLocalPosition(this.stage)
+      this.currentPlayerId = this.gameState.getPlayerId(position.x, position.y)
+      this.sourceHighlight = this.highlightSourceTile(position.x, position.y)
       this.highlightContainer.addChild(this.sourceHighlight)
     } else if (this.selected === true) {
-      let player = this.players[this.gameState.getCurrentPlayer()][this.currentPlayer]
-      let ptt = Utils.pixelToTilePosition(newPosition.x, newPosition.y)
-      this.gameState.movePlayer(this.currentPlayer, ptt[0], ptt[1])
-      let newPos = Utils.tileToPixelPosition(ptt[0], ptt[1])
-      player.moveTo(newPos[0], newPos[1])
-      this.currentPlayer = null
+      let position = this.eventData.getLocalPosition(this.stage)
+      let ptt = Utils.pixelToTilePosition(position.x, position.y)
+      
+      if (ptt[0] === this.gameState.state.units[this.currentPlayerId].x && ptt[1] === this.gameState.state.units[this.currentPlayerId].y) {
+        let ballId = this.gameState.getBallId(position.x, position.y)
+        let ball = this.balls[ballId]
+        if (ball) {
+          this.tokenContainer.removeChild(ball)
+          let player = this.players[this.gameState.getCurrentTeam()][this.currentPlayerId]
+          player.pickupBall(ball)
+        }
+      } else {
+        this.gameState.movePlayer(this.currentPlayerId, ptt[0], ptt[1])
+        let newPos = Utils.tileToPixelPosition(ptt[0], ptt[1])
+        let player = this.players[this.gameState.getCurrentTeam()][this.currentPlayerId]
+        player.moveTo(newPos[0], newPos[1])
+      }
+      this.currentPlayerId = null
       this.highlightContainer.removeChild(this.sourceHighlight)
       this.selected = false
     }
   }
 
   handleMouseMove () {
-      if (this.selected === true && this.currentPlayer != undefined) {
+      if (this.selected === true && this.currentPlayerId != undefined) {
         let newPosition = this.eventData.getLocalPosition(this.stage)
         if (this.targetHighlight) {
           this.highlightContainer.removeChild(this.targetHighlight)
