@@ -25,6 +25,11 @@ class Ball {
     sprite.addChild(idText)
 
     this.sprite = sprite
+
+
+    sprite.on('click', (event) => {
+      console.log(sprite)
+    })
   }
 
   circleTexture (hexColor) {

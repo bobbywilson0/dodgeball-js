@@ -20121,6 +20121,10 @@ var Ball = function () {
     sprite.addChild(idText);
 
     this.sprite = sprite;
+
+    sprite.on('click', function (event) {
+      console.log(sprite);
+    });
   }
 
   _createClass(Ball, [{
@@ -20168,6 +20172,7 @@ var GameBoard = function () {
     this.stage = stage;
     this.players = players;
     this.balls = balls;
+    this.gameState = gameState;
 
     this.drawBoard(Config.BOARD_WIDTH, Config.BOARD_HEIGHT, Config.TILE_SIZE);
     stage.addChild(this.highlightContainer);
@@ -20178,42 +20183,54 @@ var GameBoard = function () {
     this.currentPlayer = null;
 
     stage.on('click', function (event) {
-      _this.highlightContainer.removeChild(_this.targetHighlight);
-      _this.eventData = event.data;
-      var position = _this.eventData.getLocalPosition(stage);
-      var playerOnTile = gameState.getPlayerId(position.x, position.y);
-      if ((_this.selected === undefined || _this.selected === false) && playerOnTile != undefined) {
-        _this.selected = true;
-        _this.currentPlayer = gameState.getPlayerId(position.x, position.y);
-        var newPosition = _this.eventData.getLocalPosition(stage);
-        _this.sourceHighlight = _this.highlightSourceTile(newPosition.x, newPosition.y);
-        _this.highlightContainer.addChild(_this.sourceHighlight);
-      } else if (_this.selected === true) {
-        var _newPosition = _this.eventData.getLocalPosition(stage);
-        var ptt = Utils.pixelToTilePosition(_newPosition.x, _newPosition.y);
-        gameState.movePlayer(_this.currentPlayer, ptt[0], ptt[1]);
-        var newPos = Utils.tileToPixelPosition(ptt[0], ptt[1]);
-        var sprite = _this.players[gameState.getCurrentPlayer()][_this.currentPlayer].sprite;
-        TweenLite.to(sprite, 0.5, { x: newPos[0], y: newPos[1], ease: Back.easeOut.config(1.7) });
-        _this.currentPlayer = null;
-        _this.highlightContainer.removeChild(_this.sourceHighlight);
-        _this.selected = false;
-      }
+      return _this.handleClickEvent(event);
     });
-
+    stage.on('touchend', function (event) {
+      return _this.handleClickEvent(event);
+    });
     stage.on('mousemove', function () {
-      if (_this.selected === true && _this.currentPlayer != undefined) {
-        var newPosition = _this.eventData.getLocalPosition(stage);
-        if (_this.targetHighlight) {
-          _this.highlightContainer.removeChild(_this.targetHighlight);
-        }
-        _this.targetHighlight = _this.highlightTargetTile(newPosition.x, newPosition.y);
-        _this.highlightContainer.addChild(_this.targetHighlight);
-      }
+      return _this.handleMouseMove();
     });
   }
 
   _createClass(GameBoard, [{
+    key: 'handleClickEvent',
+    value: function handleClickEvent(event) {
+      this.highlightContainer.removeChild(this.targetHighlight);
+      this.eventData = event.data;
+      var position = this.eventData.getLocalPosition(this.stage);
+      var playerOnTile = this.gameState.getPlayerId(position.x, position.y);
+      if ((this.selected === undefined || this.selected === false) && playerOnTile != undefined) {
+        this.selected = true;
+        this.currentPlayer = this.gameState.getPlayerId(position.x, position.y);
+        var newPosition = this.eventData.getLocalPosition(this.stage);
+        this.sourceHighlight = this.highlightSourceTile(newPosition.x, newPosition.y);
+        this.highlightContainer.addChild(this.sourceHighlight);
+      } else if (this.selected === true) {
+        var _newPosition = this.eventData.getLocalPosition(this.stage);
+        var ptt = Utils.pixelToTilePosition(_newPosition.x, _newPosition.y);
+        this.gameState.movePlayer(this.currentPlayer, ptt[0], ptt[1]);
+        var newPos = Utils.tileToPixelPosition(ptt[0], ptt[1]);
+        var sprite = this.players[this.gameState.getCurrentPlayer()][this.currentPlayer].sprite;
+        TweenLite.to(sprite, 0.5, { x: newPos[0], y: newPos[1], ease: Back.easeOut.config(1.7) });
+        this.currentPlayer = null;
+        this.highlightContainer.removeChild(this.sourceHighlight);
+        this.selected = false;
+      }
+    }
+  }, {
+    key: 'handleMouseMove',
+    value: function handleMouseMove() {
+      if (this.selected === true && this.currentPlayer != undefined) {
+        var newPosition = this.eventData.getLocalPosition(this.stage);
+        if (this.targetHighlight) {
+          this.highlightContainer.removeChild(this.targetHighlight);
+        }
+        this.targetHighlight = this.highlightTargetTile(newPosition.x, newPosition.y);
+        this.highlightContainer.addChild(this.targetHighlight);
+      }
+    }
+  }, {
     key: 'highlightTargetTile',
     value: function highlightTargetTile(x, y) {
       var highlightGraphic = new PIXI.Graphics();

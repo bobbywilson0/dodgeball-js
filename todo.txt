@@ -6,7 +6,6 @@ short term:
   - limit token movement
   - neutral zone tiles
   - debug info pane
-  - mobile events
   - resize to full screen
 
 big stuff:
@@ -18,11 +17,10 @@ big stuff:
   - stats / probability
 
 done:
-  X github page
-  X tween movement
-  X show number on player
-  X click token, click tile to place
-  X make ball separate from player
-  X add heads to players
-
-
+  - github page
+  - tween movement
+  - show number on player
+  - click token, click tile to place
+  - make ball separate from player
+  - add heads to players
+  - mobile events

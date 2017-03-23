@@ -10,6 +10,7 @@ class GameBoard {
     this.stage = stage
     this.players = players
     this.balls = balls
+    this.gameState = gameState
 
     this.drawBoard(Config.BOARD_WIDTH, Config.BOARD_HEIGHT, Config.TILE_SIZE)
     stage.addChild(this.highlightContainer)
@@ -19,41 +20,45 @@ class GameBoard {
     this.selected = undefined
     this.currentPlayer = null
 
-    stage.on('click', (event) => {
-      this.highlightContainer.removeChild(this.targetHighlight)
-      this.eventData = event.data
-      let position = this.eventData.getLocalPosition(stage)
-      let playerOnTile = gameState.getPlayerId(position.x, position.y)
-      if ((this.selected === undefined || this.selected === false) && playerOnTile != undefined) {
-        this.selected = true
-        this.currentPlayer = gameState.getPlayerId(position.x, position.y)
-        let newPosition = this.eventData.getLocalPosition(stage)
-        this.sourceHighlight = this.highlightSourceTile(newPosition.x, newPosition.y)
-        this.highlightContainer.addChild(this.sourceHighlight)
-      } else if (this.selected === true) {
-        let newPosition = this.eventData.getLocalPosition(stage)
-        let ptt = Utils.pixelToTilePosition(newPosition.x, newPosition.y)
-        gameState.movePlayer(this.currentPlayer, ptt[0], ptt[1])
-        let newPos = Utils.tileToPixelPosition(ptt[0], ptt[1])
-        let sprite = this.players[gameState.getCurrentPlayer()][this.currentPlayer].sprite
-        TweenLite.to(sprite, 0.5, {x: newPos[0], y: newPos[1], ease: Back.easeOut.config(1.7)})
-        this.currentPlayer = null
-        this.highlightContainer.removeChild(this.sourceHighlight)
-        this.selected = false
-      }
-    })
+    stage.on('click', (event) => this.handleClickEvent(event))
+    stage.on('touchend', (event) => this.handleClickEvent(event))
+    stage.on('mousemove', () => this.handleMouseMove())
+  }
 
-    stage.on('mousemove', () => {
+  handleClickEvent (event) {
+    this.highlightContainer.removeChild(this.targetHighlight)
+    this.eventData = event.data
+    let position = this.eventData.getLocalPosition(this.stage)
+    let playerOnTile = this.gameState.getPlayerId(position.x, position.y)
+    if ((this.selected === undefined || this.selected === false) && playerOnTile != undefined) {
+      this.selected = true
+      this.currentPlayer = this.gameState.getPlayerId(position.x, position.y)
+      let newPosition = this.eventData.getLocalPosition(this.stage)
+      this.sourceHighlight = this.highlightSourceTile(newPosition.x, newPosition.y)
+      this.highlightContainer.addChild(this.sourceHighlight)
+    } else if (this.selected === true) {
+      let newPosition = this.eventData.getLocalPosition(this.stage)
+      let ptt = Utils.pixelToTilePosition(newPosition.x, newPosition.y)
+      this.gameState.movePlayer(this.currentPlayer, ptt[0], ptt[1])
+      let newPos = Utils.tileToPixelPosition(ptt[0], ptt[1])
+      let sprite = this.players[this.gameState.getCurrentPlayer()][this.currentPlayer].sprite
+      TweenLite.to(sprite, 0.5, {x: newPos[0], y: newPos[1], ease: Back.easeOut.config(1.7)})
+      this.currentPlayer = null
+      this.highlightContainer.removeChild(this.sourceHighlight)
+      this.selected = false
+    }
+  }
+
+  handleMouseMove () {
       if (this.selected === true && this.currentPlayer != undefined) {
-        let newPosition = this.eventData.getLocalPosition(stage)
+        let newPosition = this.eventData.getLocalPosition(this.stage)
         if (this.targetHighlight) {
           this.highlightContainer.removeChild(this.targetHighlight)
         }
         this.targetHighlight = this.highlightTargetTile(newPosition.x, newPosition.y)
         this.highlightContainer.addChild(this.targetHighlight)
       }
-    })
-  }
+    }
 
   highlightTargetTile (x, y) {
     let highlightGraphic = new PIXI.Graphics()
