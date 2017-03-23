@@ -1,6 +1,4 @@
 short term:
-  X make ball separate from player
-  X add heads to players
   - check if player is on ball
   - show menu for ball pickup
   - add actions
@@ -8,10 +6,8 @@ short term:
   - limit token movement
   - neutral zone tiles
   - debug info pane
-  X github page
-  X tween movement
-  X show number on player
-  X click token, click tile to place
+  - mobile events
+  - resize to full screen
 
 big stuff:
   - attacking
@@ -20,4 +16,13 @@ big stuff:
     - catching / blocking
     - removing token from board
   - stats / probability
-  
+
+done:
+  X github page
+  X tween movement
+  X show number on player
+  X click token, click tile to place
+  X make ball separate from player
+  X add heads to players
+
+
