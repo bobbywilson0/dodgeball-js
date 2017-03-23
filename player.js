@@ -25,6 +25,16 @@ class Player {
       sprite.y = position[1]
       sprite.interactive = interactive
       sprite.buttonMode = interactive
+
+    let textStyle = new PIXI.TextStyle({
+      fontSize: 13,
+      fill: '#ffffff'
+    })
+    let idText = new PIXI.Text(id, textStyle)
+    idText.y = -7
+    idText.x = -3
+    sprite.addChild(idText)
+
     this.sprite = sprite
   }
   
