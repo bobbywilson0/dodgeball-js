@@ -7,6 +7,7 @@ short term:
   - limit token movement
   X tween movement
   - neutral zone tiles
+  - github page
 
 big stuff:
   - attacking
