@@ -3,7 +3,7 @@ const Utils = require('./utils')
 
 class Ball {
 
-  constructor(x, y, id, team, interactive) {
+  constructor(x, y, id) {
     let greenCircle = this.circleTexture(0x00FF00)
     let graphic
 
@@ -14,6 +14,7 @@ class Ball {
     let position = Utils.tileToPixelPosition(x, y)
     sprite.x = position[0]
     sprite.y = position[1]
+    sprite.interactive = true
 
     let textStyle = new PIXI.TextStyle({
       fontSize: 13,

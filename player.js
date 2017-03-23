@@ -56,6 +56,10 @@ class Player {
       .generateCanvasTexture()
   }
 
+  moveTo(x, y) {
+    TweenLite.to(this.sprite, 0.5, {x: x, y: y, ease: Back.easeOut.config(1.7)})
+  }
+
 }
 
 export default Player

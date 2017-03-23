@@ -22,36 +22,31 @@ let stage = new PIXI.Container()
 stage.interactive = true
 
 let tiles = {
-  turn: 'blueTeam',
-  blueTeam: {
-    '1': { x: 0, y: 0 },
-    '2': { x: 0, y: 2 },
-    '3': { x: 0, y: 4 },
-    '4': { x: 0, y: 6 }
-  },
-  redTeam: {
-    '1':{ x: 6, y: 0 },
-    '2':{ x: 6, y: 2 },
-    '3':{ x: 6, y: 4 },
-    '4':{ x: 6, y: 6 }
-  },
-  balls: {
-    '1': { x: 3, y: 0 },
-    '2': { x: 3, y: 2 },
-    '3': { x: 3, y: 4 },
-    '4': { x: 3, y: 6 }
+  turn: 'blue',
+  units: {
+    '1': { x: 0, y: 0, type: 'player', team: 'blue' },
+    '2': { x: 0, y: 2, type: 'player', team: 'blue' },
+    '3': { x: 0, y: 4, type: 'player', team: 'blue' },
+    '4': { x: 0, y: 6, type: 'player', team: 'blue' },
+    '5': { x: 6, y: 0, type: 'player', team: 'red' },
+    '6': { x: 6, y: 2, type: 'player', team: 'red' },
+    '7': { x: 6, y: 4, type: 'player', team: 'red' },
+    '8': { x: 6, y: 6, type: 'player', team: 'red' },
+    '9': { x: 3, y: 0, type: 'player', team: 'ball' },
+    '10': { x: 3, y: 2, type: 'ball' },
+    '11': { x: 3, y: 4, type: 'ball' },
+    '12': { x: 3, y: 6, type: 'ball' }
   }
 }
 
 let gameState = new GameState(tiles)
 let players = {
-  'blueTeam': {},
-  'redTeam': {}
+  'blue': {},
+  'red': {}
 }
 let balls = {}
 
 let gameBoard = new GameBoard(stage, gameState, players, balls)
-
 
 function animate () {
   renderer.render(stage)
@@ -59,22 +54,20 @@ function animate () {
 }
 
 function setup () {
-  _.forEach(gameState.state.blueTeam, function(p, id) {
-    let player = new Player(p.x, p.y, id, 'blue', true)
-    gameBoard.addToken(player.sprite)
-    players['blueTeam'][id] = player
-  })
-
-  _.forEach(gameState.state.redTeam, function(p, id) {
-    let player = new Player(p.x, p.y, id, 'red', true)
-    gameBoard.addToken(player.sprite)
-    players['redTeam'][id] = player
-  })
-
-  _.forEach(gameState.state.balls, function(p, id) {
-    let ball = new Ball(p.x, p.y, id, 'green', false)
-    gameBoard.addToken(ball.sprite)
-    balls[id] = ball
+  _.forEach(gameState.state.units, function(p, id) {
+    if (p.team === 'blue') {
+      let player = new Player(p.x, p.y, id, 'blue', true)
+      players['blue'][id] = player
+      gameBoard.addToken(player.sprite)
+    } else if (p.team === 'red') {
+      let player = new Player(p.x, p.y, id, 'red', true)
+      players['red'][id] = player
+      gameBoard.addToken(player.sprite)
+    } else {
+      let ball = new Ball(p.x, p.y, id)
+      balls[id] = ball
+      gameBoard.addToken(ball.sprite)
+    }
   })
 }
 
