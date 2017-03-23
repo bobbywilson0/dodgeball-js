@@ -1,3 +1,6 @@
+---
+layout: default
+---
 # Dodgeball
 
 ## Beginning the game
