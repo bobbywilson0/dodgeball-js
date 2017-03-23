@@ -20097,7 +20097,7 @@ var Config = __webpack_require__(10);
 var Utils = __webpack_require__(18);
 
 var Ball = function () {
-  function Ball(x, y, id, team, interactive) {
+  function Ball(x, y, id) {
     _classCallCheck(this, Ball);
 
     var greenCircle = this.circleTexture(0x00FF00);
@@ -20110,6 +20110,7 @@ var Ball = function () {
     var position = Utils.tileToPixelPosition(x, y);
     sprite.x = position[0];
     sprite.y = position[1];
+    sprite.interactive = true;
 
     var textStyle = new PIXI.TextStyle({
       fontSize: 13,
@@ -20198,21 +20199,20 @@ var GameBoard = function () {
     value: function handleClickEvent(event) {
       this.highlightContainer.removeChild(this.targetHighlight);
       this.eventData = event.data;
+      var newPosition = this.eventData.getLocalPosition(this.stage);
       var position = this.eventData.getLocalPosition(this.stage);
-      var playerOnTile = this.gameState.getPlayerId(position.x, position.y);
+      var playerOnTile = this.gameState.getUnitId(position.x, position.y);
       if ((this.selected === undefined || this.selected === false) && playerOnTile != undefined) {
         this.selected = true;
-        this.currentPlayer = this.gameState.getPlayerId(position.x, position.y);
-        var newPosition = this.eventData.getLocalPosition(this.stage);
+        this.currentPlayer = this.gameState.getUnitId(position.x, position.y);
         this.sourceHighlight = this.highlightSourceTile(newPosition.x, newPosition.y);
         this.highlightContainer.addChild(this.sourceHighlight);
       } else if (this.selected === true) {
-        var _newPosition = this.eventData.getLocalPosition(this.stage);
-        var ptt = Utils.pixelToTilePosition(_newPosition.x, _newPosition.y);
+        var player = this.players[this.gameState.getCurrentPlayer()][this.currentPlayer];
+        var ptt = Utils.pixelToTilePosition(newPosition.x, newPosition.y);
         this.gameState.movePlayer(this.currentPlayer, ptt[0], ptt[1]);
         var newPos = Utils.tileToPixelPosition(ptt[0], ptt[1]);
-        var sprite = this.players[this.gameState.getCurrentPlayer()][this.currentPlayer].sprite;
-        TweenLite.to(sprite, 0.5, { x: newPos[0], y: newPos[1], ease: Back.easeOut.config(1.7) });
+        player.moveTo(newPos[0], newPos[1]);
         this.currentPlayer = null;
         this.highlightContainer.removeChild(this.sourceHighlight);
         this.selected = false;
@@ -20307,26 +20307,27 @@ var GameState = function () {
     }
   }, {
     key: 'movePlayer',
-    value: function movePlayer(playerId, x, y) {
-      if (playerId != undefined) {
+    value: function movePlayer(unitId, x, y) {
+      if (unitId != undefined) {
         var activeTeam = this.state[this.state.turn];
-        activeTeam[playerId].x = x;
-        activeTeam[playerId].y = y;
+        var unit = this.state.units[unitId];
+        if (unit.unit === activeTeam) {
+          unit.x = x;
+          unit.y = y;
+        }
       }
     }
   }, {
-    key: 'getPlayerId',
-    value: function getPlayerId(x, y) {
-      var activeTeam = this.state[this.state.turn];
-      var state = this.state;
-      var playerId = void 0;
-      _.each(activeTeam, function (v, k) {
+    key: 'getUnitId',
+    value: function getUnitId(x, y) {
+      var unitId = void 0;
+      _.each(this.state.units, function (v, k) {
         var ptt = Utils.pixelToTilePosition(x, y);
         if (v.x === ptt[0] && v.y === ptt[1]) {
-          playerId = k;
+          unitId = k;
         }
       });
-      return playerId;
+      return unitId;
     }
   }]);
 
@@ -20406,6 +20407,11 @@ var Player = function () {
       var randomSkinTone = skinTones[Math.floor(Math.random() * skinTones.length)];
       graphic.beginFill(randomSkinTone);
       return graphic.drawCircle(0, 0, 18).generateCanvasTexture();
+    }
+  }, {
+    key: 'moveTo',
+    value: function moveTo(x, y) {
+      TweenLite.to(this.sprite, 0.5, { x: x, y: y, ease: Back.easeOut.config(1.7) });
     }
   }]);
 
@@ -37633,9 +37639,9 @@ global.PIXI = exports; // eslint-disable-line
 "use strict";
 
 
-var _player = __webpack_require__(95);
+var _player2 = __webpack_require__(95);
 
-var _player2 = _interopRequireDefault(_player);
+var _player3 = _interopRequireDefault(_player2);
 
 var _ball = __webpack_require__(92);
 
@@ -37668,31 +37674,27 @@ var stage = new PIXI.Container();
 stage.interactive = true;
 
 var tiles = {
-  turn: 'blueTeam',
-  blueTeam: {
-    '1': { x: 0, y: 0 },
-    '2': { x: 0, y: 2 },
-    '3': { x: 0, y: 4 },
-    '4': { x: 0, y: 6 }
-  },
-  redTeam: {
-    '1': { x: 6, y: 0 },
-    '2': { x: 6, y: 2 },
-    '3': { x: 6, y: 4 },
-    '4': { x: 6, y: 6 }
-  },
-  balls: {
-    '1': { x: 3, y: 0 },
-    '2': { x: 3, y: 2 },
-    '3': { x: 3, y: 4 },
-    '4': { x: 3, y: 6 }
+  turn: 'blue',
+  units: {
+    '1': { x: 0, y: 0, type: 'player', team: 'blue' },
+    '2': { x: 0, y: 2, type: 'player', team: 'blue' },
+    '3': { x: 0, y: 4, type: 'player', team: 'blue' },
+    '4': { x: 0, y: 6, type: 'player', team: 'blue' },
+    '5': { x: 6, y: 0, type: 'player', team: 'red' },
+    '6': { x: 6, y: 2, type: 'player', team: 'red' },
+    '7': { x: 6, y: 4, type: 'player', team: 'red' },
+    '8': { x: 6, y: 6, type: 'player', team: 'red' },
+    '9': { x: 3, y: 0, type: 'player', team: 'ball' },
+    '10': { x: 3, y: 2, type: 'ball' },
+    '11': { x: 3, y: 4, type: 'ball' },
+    '12': { x: 3, y: 6, type: 'ball' }
   }
 };
 
 var gameState = new _gameState2.default(tiles);
 var players = {
-  'blueTeam': {},
-  'redTeam': {}
+  'blue': {},
+  'red': {}
 };
 var balls = {};
 
@@ -37704,22 +37706,20 @@ function animate() {
 }
 
 function setup() {
-  _.forEach(gameState.state.blueTeam, function (p, id) {
-    var player = new _player2.default(p.x, p.y, id, 'blue', true);
-    gameBoard.addToken(player.sprite);
-    players['blueTeam'][id] = player;
-  });
-
-  _.forEach(gameState.state.redTeam, function (p, id) {
-    var player = new _player2.default(p.x, p.y, id, 'red', true);
-    gameBoard.addToken(player.sprite);
-    players['redTeam'][id] = player;
-  });
-
-  _.forEach(gameState.state.balls, function (p, id) {
-    var ball = new _ball2.default(p.x, p.y, id, 'green', false);
-    gameBoard.addToken(ball.sprite);
-    balls[id] = ball;
+  _.forEach(gameState.state.units, function (p, id) {
+    if (p.team === 'blue') {
+      var player = new _player3.default(p.x, p.y, id, 'blue', true);
+      players['blue'][id] = player;
+      gameBoard.addToken(player.sprite);
+    } else if (p.team === 'red') {
+      var _player = new _player3.default(p.x, p.y, id, 'red', true);
+      players['red'][id] = _player;
+      gameBoard.addToken(_player.sprite);
+    } else {
+      var ball = new _ball2.default(p.x, p.y, id);
+      balls[id] = ball;
+      gameBoard.addToken(ball.sprite);
+    }
   });
 }
 
