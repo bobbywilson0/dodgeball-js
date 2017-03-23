@@ -1,10 +1,12 @@
 short term:
   X click token, click tile to place
-  - check if token is on ball
+  - check if player is on ball
+  - show number on player
   - show menu for ball pickup
   - switch turns after two actions
   - limit token movement
-  - tween movement
+  X tween movement
+  - neutral zone tiles
 
 big stuff:
   - attacking

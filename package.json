@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "brfs": "^1.4.1",
+    "gsap": "^1.19.1",
     "json-loader": "^0.5.4",
     "lodash": "^4.17.4",
     "pixi.js": "^4.0.8",

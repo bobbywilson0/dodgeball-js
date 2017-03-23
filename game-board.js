@@ -1,5 +1,7 @@
 let Utils = require('./utils')
 let Config = require('./config')
+require('gsap/TweenLite')
+require('gsap/EasePack')
 
 class GameBoard {
   constructor(stage, gameState, players, balls) {
@@ -34,8 +36,7 @@ class GameBoard {
         gameState.movePlayer(this.currentPlayer, ptt[0], ptt[1])
         let newPos = Utils.tileToPixelPosition(ptt[0], ptt[1])
         let sprite = this.players[gameState.getCurrentPlayer()][this.currentPlayer].sprite
-        sprite.x = newPos[0]
-        sprite.y = newPos[1]
+        TweenLite.to(sprite, 0.5, {x: newPos[0], y: newPos[1], ease: Back.easeOut.config(1.7)})
         this.currentPlayer = null
         this.highlightContainer.removeChild(this.sourceHighlight)
         this.selected = false
