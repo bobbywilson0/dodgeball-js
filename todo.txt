@@ -1,10 +1,19 @@
 have to have:
-  - limit token movement
-  - removing token from board
+  - ui
+    - show turn
+    - show hit or miss
+    - show action count
+  - throwing
+    - miss moves to different tile than defender
+    - off board
+  - limit player movement
+  - two player
+    - game server
 
 nice to have:
   - neutral zone tiles
   - debug info pane
+  - blocking possibility 
 
 big stuff:
   - catching / blocking
@@ -26,3 +35,4 @@ done:
     - switch turns after x actions
   - attacking
     - throwing
+    - removing token from board

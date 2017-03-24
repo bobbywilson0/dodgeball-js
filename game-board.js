@@ -45,11 +45,19 @@ class GameBoard {
           console.log("can't move on top of another player")
         } else if (this.selectedPlayer.hasBall) {
           this.actionCount += 1
-          let ball = this.selectedPlayerObject().throwBallAt(player)
+          let pPlayer = this.players[player.id]
+          let outcome = this.selectedPlayerObject().throwBallAt(pPlayer)
+          let ball = outcome.ball
           let unit = this.gameState.state.units[ball.id]
           unit.x = player.x
           unit.y = player.y
           this.tokenContainer.addChild(ball.sprite)
+          if (outcome.hit) {
+            let player = this.gameState.state.units[pPlayer.id]
+            player.out = true
+            player.x = pPlayer.x
+            player.y = pPlayer.y
+          }
         }
       } else if (tilePosition.x === this.selectedPlayer.x && tilePosition.y === this.selectedPlayer.y) {
         this.pickupBall(position.x, position.y)
@@ -74,9 +82,8 @@ class GameBoard {
       let ball = this.gameState.getBall(x, y) 
       this.gameState.moveUnit(ball, x, y)
     }
-    let newPos = Utils.tileToPixelPosition(x, y)
-    let player = this.players[this.gameState.state.turn][this.selectedPlayer.id]
-    player.moveTo(newPos.x, newPos.y)
+    let player = this.players[this.selectedPlayer.id]
+    player.moveTo(x, y)
   }
 
   pickupBall(x, y) {
@@ -85,7 +92,7 @@ class GameBoard {
     let currentBall = this.balls[ball.id]
     if (currentBall) {
       this.tokenContainer.removeChild(currentBall)
-      let player = this.players[this.gameState.state.turn][this.selectedPlayer.id]
+      let player = this.players[this.selectedPlayer.id]
       player.pickupBall(currentBall)
       this.selectedPlayer['hasBall'] = true
     }
@@ -111,7 +118,7 @@ class GameBoard {
   }
 
   selectedPlayerObject() {
-    return this.players[this.gameState.state.turn][this.selectedPlayer.id]
+    return this.players[this.selectedPlayer.id]
   }
 
   highlightTargetTile (x, y) {

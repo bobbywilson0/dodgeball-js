@@ -55,8 +55,6 @@ let tiles = {
 
 let gameState = new GameState(tiles)
 let players = {
-  'blue': {},
-  'red': {}
 }
 let balls = {}
 
@@ -71,11 +69,11 @@ function setup () {
   _.forEach(gameState.state.units, function(p, id) {
     if (p.team === 'blue') {
       let player = new Player(p.x, p.y, id, 'blue', true)
-      players['blue'][id] = player
+      players[id] = player
       gameBoard.addToken(player.sprite)
     } else if (p.team === 'red') {
       let player = new Player(p.x, p.y, id, 'red', true)
-      players['red'][id] = player
+      players[id] = player
       gameBoard.addToken(player.sprite)
     } else {
       let ball = new Ball(p.x, p.y, id)

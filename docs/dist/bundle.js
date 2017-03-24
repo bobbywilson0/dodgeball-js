@@ -20221,11 +20221,19 @@ var GameBoard = function () {
             console.log("can't move on top of another player");
           } else if (this.selectedPlayer.hasBall) {
             this.actionCount += 1;
-            var ball = this.selectedPlayerObject().throwBallAt(player);
+            var pPlayer = this.players[player.id];
+            var outcome = this.selectedPlayerObject().throwBallAt(pPlayer);
+            var ball = outcome.ball;
             var unit = this.gameState.state.units[ball.id];
             unit.x = player.x;
             unit.y = player.y;
             this.tokenContainer.addChild(ball.sprite);
+            if (outcome.hit) {
+              var _player = this.gameState.state.units[pPlayer.id];
+              _player.out = true;
+              _player.x = pPlayer.x;
+              _player.y = pPlayer.y;
+            }
           }
         } else if (tilePosition.x === this.selectedPlayer.x && tilePosition.y === this.selectedPlayer.y) {
           this.pickupBall(position.x, position.y);
@@ -20252,9 +20260,8 @@ var GameBoard = function () {
         var ball = this.gameState.getBall(x, y);
         this.gameState.moveUnit(ball, x, y);
       }
-      var newPos = Utils.tileToPixelPosition(x, y);
-      var player = this.players[this.gameState.state.turn][this.selectedPlayer.id];
-      player.moveTo(newPos.x, newPos.y);
+      var player = this.players[this.selectedPlayer.id];
+      player.moveTo(x, y);
     }
   }, {
     key: 'pickupBall',
@@ -20264,7 +20271,7 @@ var GameBoard = function () {
       var currentBall = this.balls[ball.id];
       if (currentBall) {
         this.tokenContainer.removeChild(currentBall);
-        var player = this.players[this.gameState.state.turn][this.selectedPlayer.id];
+        var player = this.players[this.selectedPlayer.id];
         player.pickupBall(currentBall);
         this.selectedPlayer['hasBall'] = true;
       }
@@ -20293,7 +20300,7 @@ var GameBoard = function () {
   }, {
     key: 'selectedPlayerObject',
     value: function selectedPlayerObject() {
-      return this.players[this.gameState.state.turn][this.selectedPlayer.id];
+      return this.players[this.selectedPlayer.id];
     }
   }, {
     key: 'highlightTargetTile',
@@ -20452,6 +20459,9 @@ var Player = function () {
     var blueCircle = this.rectangleTexture(0x0000FF);
     var graphic = void 0;
 
+    this.x = x;
+    this.y = y;
+    this.id = id;
     this.ball = undefined;
 
     if (team === 'blue') {
@@ -20502,7 +20512,10 @@ var Player = function () {
   }, {
     key: 'moveTo',
     value: function moveTo(x, y) {
-      TweenLite.to(this.sprite, 0.5, { x: x, y: y, ease: Back.easeOut.config(1.7) });
+      this.x = x;
+      this.y = y;
+      var pixelPosition = Utils.tileToPixelPosition(x, y);
+      TweenLite.to(this.sprite, 0.5, { x: pixelPosition.x, y: pixelPosition.y, ease: Back.easeOut.config(1.7) });
     }
   }, {
     key: 'pickupBall',
@@ -20516,18 +20529,22 @@ var Player = function () {
     key: 'throwBallAt',
     value: function throwBallAt(player) {
       var ball = this.ball;
+      console.log(player);
       var pixelPosition = Utils.tileToPixelPosition(player.x, player.y);
       TweenLite.fromTo(ball.sprite, 0.5, { x: this.sprite.x, y: this.sprite.y }, { x: pixelPosition.x, y: pixelPosition.y, ease: Power4.easeOut });
       this.ball = undefined;
       this.sprite.removeChild(ball.sprite);
       var r = Math.floor(Math.random() * 2);
-      console.log(r);
+      var outcome = { ball: ball, hit: undefined };
       if (r === 1) {
-        console.log('hit');
+        player.x = -1;
+        player.y = -1;
+        TweenLite.to(player.sprite, 0.5, { x: 0, y: -200 });
+        outcome.hit = true;
       } else {
-        console.log('miss');
+        outcome.hit = false;
       }
-      return ball;
+      return outcome;
     }
   }]);
 
@@ -37822,10 +37839,7 @@ var tiles = {
 };
 
 var gameState = new _gameState2.default(tiles);
-var players = {
-  'blue': {},
-  'red': {}
-};
+var players = {};
 var balls = {};
 
 var gameBoard = new _gameBoard2.default(stage, gameState, players, balls);
@@ -37839,11 +37853,11 @@ function setup() {
   _.forEach(gameState.state.units, function (p, id) {
     if (p.team === 'blue') {
       var player = new _player3.default(p.x, p.y, id, 'blue', true);
-      players['blue'][id] = player;
+      players[id] = player;
       gameBoard.addToken(player.sprite);
     } else if (p.team === 'red') {
       var _player = new _player3.default(p.x, p.y, id, 'red', true);
-      players['red'][id] = _player;
+      players[id] = _player;
       gameBoard.addToken(_player.sprite);
     } else {
       var ball = new _ball2.default(p.x, p.y, id);

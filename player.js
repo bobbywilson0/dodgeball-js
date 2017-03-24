@@ -7,7 +7,10 @@ class Player {
     let redCircle = this.rectangleTexture(0xFF0000)
     let blueCircle = this.rectangleTexture(0x0000FF)
     let graphic
-
+  
+    this.x = x
+    this.y = y
+    this.id = id
     this.ball = undefined
 
     if (team === 'blue') {
@@ -58,7 +61,10 @@ class Player {
   }
 
   moveTo (x, y) {
-    TweenLite.to(this.sprite, 0.5, {x: x, y: y, ease: Back.easeOut.config(1.7)})
+    this.x = x
+    this.y = y
+    let pixelPosition = Utils.tileToPixelPosition(x, y)
+    TweenLite.to(this.sprite, 0.5, {x: pixelPosition.x, y: pixelPosition.y, ease: Back.easeOut.config(1.7)})
   }
 
   pickupBall (ball) {
@@ -70,6 +76,7 @@ class Player {
 
   throwBallAt (player) {
     let ball = this.ball
+    console.log(player)
     let pixelPosition = Utils.tileToPixelPosition(player.x, player.y)
     TweenLite.fromTo(
       ball.sprite, 
@@ -80,13 +87,16 @@ class Player {
     this.ball = undefined
     this.sprite.removeChild(ball.sprite)
     let r = Math.floor(Math.random() * 2)
-    console.log(r)
+    let outcome = {ball: ball, hit: undefined}
     if ( r === 1) {
-      console.log('hit')
+      player.x = -1
+      player.y = -1
+      TweenLite.to(player.sprite, 0.5, { x: 0, y: -200 })
+      outcome.hit = true
     } else {
-      console.log('miss')
+      outcome.hit = false
     }
-    return ball
+    return outcome
   }
 }
 
