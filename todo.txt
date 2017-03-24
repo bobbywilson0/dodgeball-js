@@ -1,12 +1,12 @@
-short term:
-  - check if player is on ball
-  - show menu for ball pickup
+have to have:
+  - two players can't be on same tile
   - add actions
-    - switch turns after two actions
+    - switch turns after x actions
   - limit token movement
+
+nice to have:
   - neutral zone tiles
   - debug info pane
-  - resize to full screen
 
 big stuff:
   - attacking
@@ -17,6 +17,7 @@ big stuff:
   - stats / probability
 
 done:
+  - check if player is on ball
   - github page
   - tween movement
   - show number on player
@@ -24,3 +25,4 @@ done:
   - make ball separate from player
   - add heads to players
   - mobile events
+  - resize to full screen

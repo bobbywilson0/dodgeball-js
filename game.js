@@ -9,17 +9,32 @@ import GameBoard from './game-board'
 const BOARD_HEIGHT = Config.BOARD_HEIGHT
 const BOARD_WIDTH = Config.BOARD_WIDTH
 const TILE_SIZE = Config.TILE_SIZE
+const GAME_WIDTH = BOARD_WIDTH * TILE_SIZE
+const GAME_HEIGHT = BOARD_HEIGHT * TILE_SIZE
 
 let renderer = PIXI.autoDetectRenderer(
     BOARD_WIDTH * TILE_SIZE,
     BOARD_HEIGHT * TILE_SIZE,
-    { antialias: true }
+    { antialias: true, 
+      autoResize: true,
+      resolution: window.devicePixelRatio
+    }
 )
-
-document.body.appendChild(renderer.view)
+renderer.view.style.position = 'absolute'
+renderer.view.style.top = '0px'
+renderer.view.style.left = '0px'
 
 let stage = new PIXI.Container()
 stage.interactive = true
+
+function resize() {
+  let yRatio = window.innerHeight / GAME_HEIGHT
+  let xRatio = window.innerWidth / GAME_WIDTH
+  console.log(xRatio)
+  stage.scale.y = yRatio
+  stage.scale.x = xRatio
+  renderer.resize(window.innerWidth, window.innerHeight)
+}
 
 let tiles = {
   turn: 'blue',
@@ -71,5 +86,7 @@ function setup () {
   })
 }
 
+resize()
+document.body.appendChild(renderer.view)
 setup()
 animate()
