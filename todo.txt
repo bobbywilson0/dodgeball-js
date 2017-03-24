@@ -1,5 +1,4 @@
 have to have:
-  - two players can't be on same tile
   - add actions
     - switch turns after x actions
   - limit token movement
@@ -26,3 +25,4 @@ done:
   - add heads to players
   - mobile events
   - resize to full screen
+  - two players can't be on same tile
