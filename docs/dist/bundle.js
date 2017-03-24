@@ -37704,13 +37704,28 @@ var Config = __webpack_require__(10);
 var BOARD_HEIGHT = Config.BOARD_HEIGHT;
 var BOARD_WIDTH = Config.BOARD_WIDTH;
 var TILE_SIZE = Config.TILE_SIZE;
+var GAME_WIDTH = BOARD_WIDTH * TILE_SIZE;
+var GAME_HEIGHT = BOARD_HEIGHT * TILE_SIZE;
 
-var renderer = PIXI.autoDetectRenderer(BOARD_WIDTH * TILE_SIZE, BOARD_HEIGHT * TILE_SIZE, { antialias: true });
-
-document.body.appendChild(renderer.view);
+var renderer = PIXI.autoDetectRenderer(BOARD_WIDTH * TILE_SIZE, BOARD_HEIGHT * TILE_SIZE, { antialias: true,
+  autoResize: true,
+  resolution: window.devicePixelRatio
+});
+renderer.view.style.position = 'absolute';
+renderer.view.style.top = '0px';
+renderer.view.style.left = '0px';
 
 var stage = new PIXI.Container();
 stage.interactive = true;
+
+function resize() {
+  var yRatio = window.innerHeight / GAME_HEIGHT;
+  var xRatio = window.innerWidth / GAME_WIDTH;
+  console.log(xRatio);
+  stage.scale.y = yRatio;
+  stage.scale.x = xRatio;
+  renderer.resize(window.innerWidth, window.innerHeight);
+}
 
 var tiles = {
   turn: 'blue',
@@ -37762,6 +37777,8 @@ function setup() {
   });
 }
 
+resize();
+document.body.appendChild(renderer.view);
 setup();
 animate();
 
