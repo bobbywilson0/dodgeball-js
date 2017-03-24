@@ -20265,10 +20265,17 @@ var GameBoard = function () {
     value: function drawBoard() {
       var boardGraphics = new PIXI.Graphics();
       boardGraphics.beginFill(0xFFFFFF);
-      boardGraphics.lineStyle(2, 0x333333);
 
       for (var i = 0; i < Config.BOARD_WIDTH; ++i) {
         for (var j = 0; j < Config.BOARD_HEIGHT; ++j) {
+          if (i <= 1) {
+            boardGraphics.lineStyle(3, 0xccccff);
+          } else if (i >= 5) {
+            boardGraphics.lineStyle(3, 0xffcccc);
+          } else {
+            boardGraphics.lineStyle(3, 0xcccccc);
+          }
+
           boardGraphics.drawRect(i * Config.TILE_SIZE, j * Config.TILE_SIZE, Config.TILE_SIZE, Config.TILE_SIZE);
         }
       }
