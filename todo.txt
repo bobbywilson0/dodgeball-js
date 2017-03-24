@@ -1,19 +1,17 @@
 have to have:
-  - add actions
-    - switch turns after x actions
   - limit token movement
+  - attacking
+    - throwing
+    - removing token from board
 
 nice to have:
   - neutral zone tiles
   - debug info pane
 
 big stuff:
-  - attacking
-    - throwing
-    - hit percentage
-    - catching / blocking
-    - removing token from board
+  - catching / blocking
   - stats / probability
+    - hit percentage
 
 done:
   - check if player is on ball
@@ -26,3 +24,6 @@ done:
   - mobile events
   - resize to full screen
   - two players can't be on same tile
+  - add actions
+    - switch turns after x actions
+

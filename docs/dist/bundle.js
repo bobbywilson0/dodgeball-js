@@ -20178,6 +20178,7 @@ var GameBoard = function () {
     this.players = players;
     this.balls = balls;
     this.gameState = gameState;
+    this.actionCount = 0;
 
     this.drawBoard(Config.BOARD_WIDTH, Config.BOARD_HEIGHT, Config.TILE_SIZE);
     stage.addChild(this.highlightContainer);
@@ -20200,10 +20201,17 @@ var GameBoard = function () {
   _createClass(GameBoard, [{
     key: 'handleClickEvent',
     value: function handleClickEvent(event) {
+      if (this.actionCount > 1) {
+        this.actionCount = 0;
+        this.selectedPlayer = undefined;
+        this.eventData = undefined;
+        this.switchTurns();
+      }
+
       this.highlightContainer.removeChild(this.targetHighlight);
       var position = event.data.getLocalPosition(this.stage);
       var player = this.gameState.getPlayer(position.x, position.y);
-      if (!this.selectedPlayer && player) {
+      if (!this.selectedPlayer && player && player.team === this.gameState.state.turn) {
         this.selectPlayer(position.x, position.y);
       } else if (this.selectedPlayer) {
         var tilePosition = Utils.pixelToTilePosition(position.x, position.y);
@@ -20228,19 +20236,21 @@ var GameBoard = function () {
   }, {
     key: 'movePlayer',
     value: function movePlayer(x, y) {
+      this.actionCount += 1;
       this.gameState.movePlayer(this.selectedPlayer, x, y);
       var newPos = Utils.tileToPixelPosition(x, y);
-      var player = this.players[this.gameState.getCurrentTeam()][this.selectedPlayer.id];
+      var player = this.players[this.gameState.state.turn][this.selectedPlayer.id];
       player.moveTo(newPos.x, newPos.y);
     }
   }, {
     key: 'pickupBall',
     value: function pickupBall(x, y) {
+      this.actionCount += 1;
       var ball = this.gameState.getBall(x, y);
       var currentBall = this.balls[ball.id];
       if (currentBall) {
         this.tokenContainer.removeChild(currentBall);
-        var player = this.players[this.gameState.getCurrentTeam()][this.selectedPlayer.id];
+        var player = this.players[this.gameState.state.turn][this.selectedPlayer.id];
         player.pickupBall(currentBall);
       }
     }
@@ -20254,6 +20264,15 @@ var GameBoard = function () {
         }
         this.targetHighlight = this.highlightTargetTile(newPosition.x, newPosition.y);
         this.highlightContainer.addChild(this.targetHighlight);
+      }
+    }
+  }, {
+    key: 'switchTurns',
+    value: function switchTurns() {
+      if (this.gameState.state.turn == 'red') {
+        this.gameState.state.turn = 'blue';
+      } else {
+        this.gameState.state.turn = 'red';
       }
     }
   }, {

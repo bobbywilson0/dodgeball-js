@@ -11,6 +11,7 @@ class GameBoard {
     this.players = players
     this.balls = balls
     this.gameState = gameState
+    this.actionCount = 0
 
     this.drawBoard(Config.BOARD_WIDTH, Config.BOARD_HEIGHT, Config.TILE_SIZE)
     stage.addChild(this.highlightContainer)
@@ -25,10 +26,17 @@ class GameBoard {
   }
 
   handleClickEvent (event) {
+    if (this.actionCount > 1) {
+      this.actionCount = 0
+      this.selectedPlayer = undefined
+      this.eventData = undefined
+      this.switchTurns()
+    } 
+    
     this.highlightContainer.removeChild(this.targetHighlight)
     let position = event.data.getLocalPosition(this.stage)
     let player = this.gameState.getPlayer(position.x, position.y)
-    if (!this.selectedPlayer && player) {
+    if (!this.selectedPlayer && player && player.team === this.gameState.state.turn) {
       this.selectPlayer(position.x, position.y)
     } else if (this.selectedPlayer) {
       let tilePosition = Utils.pixelToTilePosition(position.x, position.y)
@@ -51,18 +59,20 @@ class GameBoard {
   }
 
   movePlayer(x, y) {
+    this.actionCount += 1
     this.gameState.movePlayer(this.selectedPlayer, x, y)
     let newPos = Utils.tileToPixelPosition(x, y)
-    let player = this.players[this.gameState.getCurrentTeam()][this.selectedPlayer.id]
+    let player = this.players[this.gameState.state.turn][this.selectedPlayer.id]
     player.moveTo(newPos.x, newPos.y)
   }
 
   pickupBall(x, y) {
+    this.actionCount += 1
     let ball = this.gameState.getBall(x, y)
     let currentBall = this.balls[ball.id]
     if (currentBall) {
       this.tokenContainer.removeChild(currentBall)
-      let player = this.players[this.gameState.getCurrentTeam()][this.selectedPlayer.id]
+      let player = this.players[this.gameState.state.turn][this.selectedPlayer.id]
       player.pickupBall(currentBall)
     }
   }
@@ -75,6 +85,14 @@ class GameBoard {
       }
       this.targetHighlight = this.highlightTargetTile(newPosition.x, newPosition.y)
       this.highlightContainer.addChild(this.targetHighlight)
+    }
+  }
+
+  switchTurns() {
+    if (this.gameState.state.turn == 'red') {
+      this.gameState.state.turn = 'blue'
+    } else {
+      this.gameState.state.turn = 'red'
     }
   }
 
