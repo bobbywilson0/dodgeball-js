@@ -28,10 +28,9 @@ let stage = new PIXI.Container()
 stage.interactive = true
 
 function resize() {
-  let yRatio = window.innerHeight / GAME_HEIGHT
+  //let yRatio = window.innerHeight / GAME_HEIGHT
   let xRatio = window.innerWidth / GAME_WIDTH
-  console.log(xRatio)
-  stage.scale.y = yRatio
+  stage.scale.y = xRatio
   stage.scale.x = xRatio
   renderer.resize(window.innerWidth, window.innerHeight)
 }
