@@ -12,8 +12,8 @@ class Ball {
     let sprite = new PIXI.Sprite(graphic)
     sprite.anchor.set(0.5)
     let position = Utils.tileToPixelPosition(x, y)
-    sprite.x = position[0]
-    sprite.y = position[1]
+    sprite.x = position.x
+    sprite.y = position.y
     sprite.interactive = true
 
     let textStyle = new PIXI.TextStyle({

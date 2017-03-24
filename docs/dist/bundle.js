@@ -4897,10 +4897,16 @@ var Config = __webpack_require__(10);
 
 module.exports = {
   tileToPixelPosition: function tileToPixelPosition(x, y) {
-    return [x * Config.TILE_SIZE + Config.TILE_SIZE / 2, y * Config.TILE_SIZE + Config.TILE_SIZE / 2];
+    return {
+      x: x * Config.TILE_SIZE + Config.TILE_SIZE / 2,
+      y: y * Config.TILE_SIZE + Config.TILE_SIZE / 2
+    };
   },
   pixelToTilePosition: function pixelToTilePosition(x, y) {
-    return [Math.floor(x / Config.TILE_SIZE), Math.floor(y / Config.TILE_SIZE)];
+    return {
+      x: Math.floor(x / Config.TILE_SIZE),
+      y: Math.floor(y / Config.TILE_SIZE)
+    };
   }
 };
 
@@ -20108,8 +20114,8 @@ var Ball = function () {
     var sprite = new PIXI.Sprite(graphic);
     sprite.anchor.set(0.5);
     var position = Utils.tileToPixelPosition(x, y);
-    sprite.x = position[0];
-    sprite.y = position[1];
+    sprite.x = position.x;
+    sprite.y = position.y;
     sprite.interactive = true;
 
     var textStyle = new PIXI.TextStyle({
@@ -20177,9 +20183,8 @@ var GameBoard = function () {
     stage.addChild(this.highlightContainer);
     stage.addChild(this.tokenContainer);
 
-    this.eventData = null;
-    this.selected = undefined;
-    this.currentPlayer = null;
+    this.eventData = undefined;
+    this.selectedPlayer = undefined;
 
     stage.on('click', function (event) {
       return _this.handleClickEvent(event);
@@ -20196,42 +20201,52 @@ var GameBoard = function () {
     key: 'handleClickEvent',
     value: function handleClickEvent(event) {
       this.highlightContainer.removeChild(this.targetHighlight);
-      this.eventData = event.data;
-      var p = this.eventData.getLocalPosition(this.stage);
-      var playerId = this.gameState.getPlayerId(p.x, p.y);
-      if ((this.selected === undefined || this.selected === false) && playerId != undefined) {
-        this.selected = true;
-        var position = this.eventData.getLocalPosition(this.stage);
-        this.currentPlayerId = this.gameState.getPlayerId(position.x, position.y);
-        this.sourceHighlight = this.highlightSourceTile(position.x, position.y);
-        this.highlightContainer.addChild(this.sourceHighlight);
-      } else if (this.selected === true) {
-        var _position = this.eventData.getLocalPosition(this.stage);
-        var ptt = Utils.pixelToTilePosition(_position.x, _position.y);
-
-        if (ptt[0] === this.gameState.state.units[this.currentPlayerId].x && ptt[1] === this.gameState.state.units[this.currentPlayerId].y) {
-          var ballId = this.gameState.getBallId(_position.x, _position.y);
-          var ball = this.balls[ballId];
-          if (ball) {
-            this.tokenContainer.removeChild(ball);
-            var player = this.players[this.gameState.getCurrentTeam()][this.currentPlayerId];
-            player.pickupBall(ball);
-          }
+      var position = event.data.getLocalPosition(this.stage);
+      var player = this.gameState.getPlayer(position.x, position.y);
+      if (!this.selectedPlayer && player) {
+        this.selectPlayer(position.x, position.y);
+      } else if (this.selectedPlayer) {
+        var tilePosition = Utils.pixelToTilePosition(position.x, position.y);
+        console.log(tilePosition, this.selectedPlayer);
+        if (tilePosition.x === this.selectedPlayer.x && tilePosition.y === this.selectedPlayer.y) {
+          this.pickupBall(position.x, position.y);
         } else {
-          this.gameState.movePlayer(this.currentPlayerId, ptt[0], ptt[1]);
-          var newPos = Utils.tileToPixelPosition(ptt[0], ptt[1]);
-          var _player = this.players[this.gameState.getCurrentTeam()][this.currentPlayerId];
-          _player.moveTo(newPos[0], newPos[1]);
+          this.movePlayer(tilePosition.x, tilePosition.y);
         }
-        this.currentPlayerId = null;
+        this.selectedPlayer = undefined;
         this.highlightContainer.removeChild(this.sourceHighlight);
-        this.selected = false;
+      }
+    }
+  }, {
+    key: 'selectPlayer',
+    value: function selectPlayer(x, y) {
+      this.selectedPlayer = this.gameState.getPlayer(x, y);
+      this.sourceHighlight = this.highlightSourceTile(x, y);
+      this.highlightContainer.addChild(this.sourceHighlight);
+    }
+  }, {
+    key: 'movePlayer',
+    value: function movePlayer(x, y) {
+      this.gameState.movePlayer(this.selectedPlayer, x, y);
+      var newPos = Utils.tileToPixelPosition(x, y);
+      var player = this.players[this.gameState.getCurrentTeam()][this.selectedPlayer.id];
+      player.moveTo(newPos.x, newPos.y);
+    }
+  }, {
+    key: 'pickupBall',
+    value: function pickupBall(x, y) {
+      var ball = this.gameState.getBall(x, y);
+      var currentBall = this.balls[ball.id];
+      if (currentBall) {
+        this.tokenContainer.removeChild(currentBall);
+        var player = this.players[this.gameState.getCurrentTeam()][this.selectedPlayer.id];
+        player.pickupBall(currentBall);
       }
     }
   }, {
     key: 'handleMouseMove',
     value: function handleMouseMove() {
-      if (this.selected === true && this.currentPlayerId != undefined) {
+      if (this.selected && this.selectedPlayer) {
         var newPosition = this.eventData.getLocalPosition(this.stage);
         if (this.targetHighlight) {
           this.highlightContainer.removeChild(this.targetHighlight);
@@ -20247,7 +20262,7 @@ var GameBoard = function () {
       highlightGraphic.beginFill(0xCCCCCC);
       highlightGraphic.lineStyle(3, 0x000000, 0);
       var tilePosition = Utils.pixelToTilePosition(x, y);
-      highlightGraphic.drawRect(tilePosition[0] * Config.TILE_SIZE + 1, tilePosition[1] * Config.TILE_SIZE + 1, Config.TILE_SIZE - 2, Config.TILE_SIZE - 2);
+      highlightGraphic.drawRect(tilePosition.x * Config.TILE_SIZE + 1, tilePosition.y * Config.TILE_SIZE + 1, Config.TILE_SIZE - 2, Config.TILE_SIZE - 2);
       return highlightGraphic;
     }
   }, {
@@ -20257,7 +20272,7 @@ var GameBoard = function () {
       highlightGraphic.beginFill(0x999999);
       highlightGraphic.lineStyle(3, 0x000000, 0);
       var tilePosition = Utils.pixelToTilePosition(x, y);
-      highlightGraphic.drawRect(tilePosition[0] * Config.TILE_SIZE + 1, tilePosition[1] * Config.TILE_SIZE + 1, Config.TILE_SIZE - 2, Config.TILE_SIZE - 2);
+      highlightGraphic.drawRect(tilePosition.x * Config.TILE_SIZE + 1, tilePosition.y * Config.TILE_SIZE + 1, Config.TILE_SIZE - 2, Config.TILE_SIZE - 2);
       return highlightGraphic;
     }
   }, {
@@ -20324,37 +20339,36 @@ var GameState = function () {
     }
   }, {
     key: 'movePlayer',
-    value: function movePlayer(unitId, x, y) {
-      if (unitId != undefined) {
-        var activeTeam = this.state[this.state.turn];
-        var unit = this.state.units[unitId];
-        if (unit.unit === activeTeam) {
+    value: function movePlayer(unit, x, y) {
+      if (unit) {
+        var activeTeam = this.state.turn;
+        if (unit.team === activeTeam) {
           unit.x = x;
           unit.y = y;
         }
       }
     }
   }, {
-    key: 'getBallId',
-    value: function getBallId(x, y) {
-      var _id = void 0;
+    key: 'getBall',
+    value: function getBall(x, y) {
+      var _unit = void 0;
       _.each(this.getUnitsAt(x, y), function (unit, id) {
         if (unit.type === 'ball') {
-          _id = id;
+          _unit = unit;
         }
       });
-      return _id;
+      return _unit;
     }
   }, {
-    key: 'getPlayerId',
-    value: function getPlayerId(x, y) {
-      var _id = void 0;
+    key: 'getPlayer',
+    value: function getPlayer(x, y) {
+      var _unit = void 0;
       _.each(this.getUnitsAt(x, y), function (unit, id) {
         if (unit.type === 'player') {
-          _id = id;
+          _unit = unit;
         }
       });
-      return _id;
+      return _unit;
     }
   }, {
     key: 'getUnitsAt',
@@ -20362,7 +20376,7 @@ var GameState = function () {
       var units = {};
       _.each(this.state.units, function (unit, id) {
         var ptt = Utils.pixelToTilePosition(x, y);
-        if (unit.x === ptt[0] && unit.y === ptt[1]) {
+        if (unit.x === ptt.x && unit.y === ptt.y) {
           units[id] = unit;
         }
       });
@@ -20413,8 +20427,8 @@ var Player = function () {
     head.anchor.set(0.5, 1.2);
     sprite.anchor.set(0.5);
     var position = Utils.tileToPixelPosition(x, y);
-    sprite.x = position[0];
-    sprite.y = position[1];
+    sprite.x = position.x;
+    sprite.y = position.y;
     sprite.interactive = interactive;
     sprite.buttonMode = interactive;
     sprite.addChild(head);
@@ -37736,18 +37750,18 @@ function resize() {
 var tiles = {
   turn: 'blue',
   units: {
-    '1': { x: 0, y: 0, type: 'player', team: 'blue' },
-    '2': { x: 0, y: 2, type: 'player', team: 'blue' },
-    '3': { x: 0, y: 4, type: 'player', team: 'blue' },
-    '4': { x: 0, y: 6, type: 'player', team: 'blue' },
-    '5': { x: 6, y: 0, type: 'player', team: 'red' },
-    '6': { x: 6, y: 2, type: 'player', team: 'red' },
-    '7': { x: 6, y: 4, type: 'player', team: 'red' },
-    '8': { x: 6, y: 6, type: 'player', team: 'red' },
-    '9': { x: 3, y: 0, type: 'ball' },
-    '10': { x: 3, y: 2, type: 'ball' },
-    '11': { x: 3, y: 4, type: 'ball' },
-    '12': { x: 3, y: 6, type: 'ball' }
+    '1': { id: '1', x: 0, y: 0, type: 'player', team: 'blue' },
+    '2': { id: '2', x: 0, y: 2, type: 'player', team: 'blue' },
+    '3': { id: '3', x: 0, y: 4, type: 'player', team: 'blue' },
+    '4': { id: '4', x: 0, y: 6, type: 'player', team: 'blue' },
+    '5': { id: '5', x: 6, y: 0, type: 'player', team: 'red' },
+    '6': { id: '6', x: 6, y: 2, type: 'player', team: 'red' },
+    '7': { id: '7', x: 6, y: 4, type: 'player', team: 'red' },
+    '8': { id: '8', x: 6, y: 6, type: 'player', team: 'red' },
+    '9': { id: '9', x: 3, y: 0, type: 'ball' },
+    '10': { id: '10', x: 3, y: 2, type: 'ball' },
+    '11': { id: '11', x: 3, y: 4, type: 'ball' },
+    '12': { id: '12', x: 3, y: 6, type: 'ball' }
   }
 };
 

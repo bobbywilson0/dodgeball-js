@@ -9,42 +9,41 @@ class GameState {
     return this.state.turn
   }
 
-  movePlayer (unitId, x, y) {
-    if (unitId != undefined) {
-      let activeTeam = this.state[this.state.turn]
-      let unit = this.state.units[unitId]
-      if (unit.unit === activeTeam) {
+  movePlayer (unit, x, y) {
+    if (unit) {
+      let activeTeam = this.state.turn
+      if (unit.team === activeTeam) {
         unit.x = x
         unit.y = y
       }
     }
   }
 
-  getBallId(x, y) {
-    let _id
+  getBall (x, y) {
+    let _unit
     _.each(this.getUnitsAt(x, y), (unit, id) => {
       if (unit.type === 'ball') {
-        _id = id
+        _unit = unit
       }
     })
-    return _id
+    return _unit
   }
 
-  getPlayerId(x, y) {
-    let _id
+  getPlayer(x, y) {
+    let _unit
     _.each(this.getUnitsAt(x, y), (unit, id) => {
       if (unit.type === 'player') {
-        _id = id
+        _unit = unit
       }
     })
-    return _id
+    return _unit
   }
 
   getUnitsAt (x, y) {
     let units = {}
     _.each(this.state.units, function(unit, id) {
       let ptt = Utils.pixelToTilePosition(x, y)
-      if (unit.x === ptt[0] && unit.y === ptt[1]) {
+      if (unit.x === ptt.x && unit.y === ptt.y) {
         units[id] = unit
       }
     })

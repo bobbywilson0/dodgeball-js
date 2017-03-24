@@ -16,9 +16,8 @@ class GameBoard {
     stage.addChild(this.highlightContainer)
     stage.addChild(this.tokenContainer)
 
-    this.eventData = null
-    this.selected = undefined
-    this.currentPlayer = null
+    this.eventData = undefined
+    this.selectedPlayer = undefined
 
     stage.on('click', (event) => this.handleClickEvent(event))
     stage.on('touchend', (event) => this.handleClickEvent(event))
@@ -27,49 +26,56 @@ class GameBoard {
 
   handleClickEvent (event) {
     this.highlightContainer.removeChild(this.targetHighlight)
-    this.eventData = event.data
-    let p = this.eventData.getLocalPosition(this.stage)
-    let playerId = this.gameState.getPlayerId(p.x, p.y)
-    if ((this.selected === undefined || this.selected === false) && playerId != undefined) {
-      this.selected = true
-      let position = this.eventData.getLocalPosition(this.stage)
-      this.currentPlayerId = this.gameState.getPlayerId(position.x, position.y)
-      this.sourceHighlight = this.highlightSourceTile(position.x, position.y)
-      this.highlightContainer.addChild(this.sourceHighlight)
-    } else if (this.selected === true) {
-      let position = this.eventData.getLocalPosition(this.stage)
-      let ptt = Utils.pixelToTilePosition(position.x, position.y)
-      
-      if (ptt[0] === this.gameState.state.units[this.currentPlayerId].x && ptt[1] === this.gameState.state.units[this.currentPlayerId].y) {
-        let ballId = this.gameState.getBallId(position.x, position.y)
-        let ball = this.balls[ballId]
-        if (ball) {
-          this.tokenContainer.removeChild(ball)
-          let player = this.players[this.gameState.getCurrentTeam()][this.currentPlayerId]
-          player.pickupBall(ball)
-        }
+    let position = event.data.getLocalPosition(this.stage)
+    let player = this.gameState.getPlayer(position.x, position.y)
+    if (!this.selectedPlayer && player) {
+      this.selectPlayer(position.x, position.y)
+    } else if (this.selectedPlayer) {
+      let tilePosition = Utils.pixelToTilePosition(position.x, position.y)
+      console.log(tilePosition, this.selectedPlayer)
+      if (tilePosition.x === this.selectedPlayer.x && tilePosition.y === this.selectedPlayer.y) {
+        this.pickupBall(position.x, position.y)
       } else {
-        this.gameState.movePlayer(this.currentPlayerId, ptt[0], ptt[1])
-        let newPos = Utils.tileToPixelPosition(ptt[0], ptt[1])
-        let player = this.players[this.gameState.getCurrentTeam()][this.currentPlayerId]
-        player.moveTo(newPos[0], newPos[1])
+        this.movePlayer(tilePosition.x, tilePosition.y)
       }
-      this.currentPlayerId = null
+      this.selectedPlayer = undefined
       this.highlightContainer.removeChild(this.sourceHighlight)
-      this.selected = false
+    }
+  }
+
+  selectPlayer(x, y) {
+    this.selectedPlayer = this.gameState.getPlayer(x, y)
+    this.sourceHighlight = this.highlightSourceTile(x, y)
+    this.highlightContainer.addChild(this.sourceHighlight)
+  }
+
+  movePlayer(x, y) {
+    this.gameState.movePlayer(this.selectedPlayer, x, y)
+    let newPos = Utils.tileToPixelPosition(x, y)
+    let player = this.players[this.gameState.getCurrentTeam()][this.selectedPlayer.id]
+    player.moveTo(newPos.x, newPos.y)
+  }
+
+  pickupBall(x, y) {
+    let ball = this.gameState.getBall(x, y)
+    let currentBall = this.balls[ball.id]
+    if (currentBall) {
+      this.tokenContainer.removeChild(currentBall)
+      let player = this.players[this.gameState.getCurrentTeam()][this.selectedPlayer.id]
+      player.pickupBall(currentBall)
     }
   }
 
   handleMouseMove () {
-      if (this.selected === true && this.currentPlayerId != undefined) {
-        let newPosition = this.eventData.getLocalPosition(this.stage)
-        if (this.targetHighlight) {
-          this.highlightContainer.removeChild(this.targetHighlight)
-        }
-        this.targetHighlight = this.highlightTargetTile(newPosition.x, newPosition.y)
-        this.highlightContainer.addChild(this.targetHighlight)
+    if (this.selected && this.selectedPlayer) {
+      let newPosition = this.eventData.getLocalPosition(this.stage)
+      if (this.targetHighlight) {
+        this.highlightContainer.removeChild(this.targetHighlight)
       }
+      this.targetHighlight = this.highlightTargetTile(newPosition.x, newPosition.y)
+      this.highlightContainer.addChild(this.targetHighlight)
     }
+  }
 
   highlightTargetTile (x, y) {
     let highlightGraphic = new PIXI.Graphics()
@@ -77,8 +83,8 @@ class GameBoard {
     highlightGraphic.lineStyle(3, 0x000000, 0)
     let tilePosition = Utils.pixelToTilePosition(x, y)
     highlightGraphic.drawRect(
-      tilePosition[0] * Config.TILE_SIZE + 1,
-      tilePosition[1] * Config.TILE_SIZE + 1,
+      tilePosition.x * Config.TILE_SIZE + 1,
+      tilePosition.y * Config.TILE_SIZE + 1,
       Config.TILE_SIZE - 2,
       Config.TILE_SIZE - 2
     )
@@ -91,8 +97,8 @@ class GameBoard {
     highlightGraphic.lineStyle(3, 0x000000, 0)
     let tilePosition = Utils.pixelToTilePosition(x, y)
     highlightGraphic.drawRect(
-      tilePosition[0] * Config.TILE_SIZE + 1,
-      tilePosition[1] * Config.TILE_SIZE + 1,
+      tilePosition.x * Config.TILE_SIZE + 1,
+      tilePosition.y * Config.TILE_SIZE + 1,
       Config.TILE_SIZE - 2,
       Config.TILE_SIZE - 2,
     )

@@ -20,8 +20,8 @@ class Player {
     head.anchor.set(0.5, 1.2)
     sprite.anchor.set(0.5)
     let position = Utils.tileToPixelPosition(x, y)
-    sprite.x = position[0]
-    sprite.y = position[1]
+    sprite.x = position.x
+    sprite.y = position.y
     sprite.interactive = interactive
     sprite.buttonMode = interactive
     sprite.addChild(head)

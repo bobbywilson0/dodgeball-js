@@ -38,18 +38,18 @@ function resize() {
 let tiles = {
   turn: 'blue',
   units: {
-    '1': { x: 0, y: 0, type: 'player', team: 'blue' },
-    '2': { x: 0, y: 2, type: 'player', team: 'blue' },
-    '3': { x: 0, y: 4, type: 'player', team: 'blue' },
-    '4': { x: 0, y: 6, type: 'player', team: 'blue' },
-    '5': { x: 6, y: 0, type: 'player', team: 'red' },
-    '6': { x: 6, y: 2, type: 'player', team: 'red' },
-    '7': { x: 6, y: 4, type: 'player', team: 'red' },
-    '8': { x: 6, y: 6, type: 'player', team: 'red' },
-    '9': { x: 3, y: 0, type: 'ball' },
-    '10': { x: 3, y: 2, type: 'ball' },
-    '11': { x: 3, y: 4, type: 'ball' },
-    '12': { x: 3, y: 6, type: 'ball' }
+    '1': { id: '1', x: 0, y: 0, type: 'player', team: 'blue' },
+    '2': { id: '2', x: 0, y: 2, type: 'player', team: 'blue' },
+    '3': { id: '3', x: 0, y: 4, type: 'player', team: 'blue' },
+    '4': { id: '4', x: 0, y: 6, type: 'player', team: 'blue' },
+    '5': { id: '5', x: 6, y: 0, type: 'player', team: 'red' },
+    '6': { id: '6', x: 6, y: 2, type: 'player', team: 'red' },
+    '7': { id: '7', x: 6, y: 4, type: 'player', team: 'red' },
+    '8': { id: '8', x: 6, y: 6, type: 'player', team: 'red' },
+    '9': { id: '9', x: 3, y: 0, type: 'ball' },
+    '10': { id: '10', x: 3, y: 2, type: 'ball' },
+    '11': { id: '11', x: 3, y: 4, type: 'ball' },
+    '12': { id: '12', x: 3, y: 6, type: 'ball' }
   }
 }
 
