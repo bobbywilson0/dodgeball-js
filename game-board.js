@@ -74,13 +74,13 @@ class GameBoard {
   highlightTargetTile (x, y) {
     let highlightGraphic = new PIXI.Graphics()
     highlightGraphic.beginFill(0xCCCCCC)
-    highlightGraphic.lineStyle(2, 0x000000)
+    highlightGraphic.lineStyle(3, 0x000000, 0)
     let tilePosition = Utils.pixelToTilePosition(x, y)
     highlightGraphic.drawRect(
-      tilePosition[0] * Config.TILE_SIZE,
-      tilePosition[1] * Config.TILE_SIZE,
-      Config.TILE_SIZE,
-      Config.TILE_SIZE
+      tilePosition[0] * Config.TILE_SIZE + 1,
+      tilePosition[1] * Config.TILE_SIZE + 1,
+      Config.TILE_SIZE - 2,
+      Config.TILE_SIZE - 2
     )
     return highlightGraphic
   }
@@ -88,13 +88,13 @@ class GameBoard {
   highlightSourceTile (x, y) {
     let highlightGraphic = new PIXI.Graphics()
     highlightGraphic.beginFill(0x999999)
-    highlightGraphic.lineStyle(2, 0x000000)
+    highlightGraphic.lineStyle(3, 0x000000, 0)
     let tilePosition = Utils.pixelToTilePosition(x, y)
     highlightGraphic.drawRect(
-      tilePosition[0] * Config.TILE_SIZE,
-      tilePosition[1] * Config.TILE_SIZE,
-      Config.TILE_SIZE,
-      Config.TILE_SIZE
+      tilePosition[0] * Config.TILE_SIZE + 1,
+      tilePosition[1] * Config.TILE_SIZE + 1,
+      Config.TILE_SIZE - 2,
+      Config.TILE_SIZE - 2,
     )
     return highlightGraphic
   }

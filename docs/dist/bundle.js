@@ -20245,9 +20245,9 @@ var GameBoard = function () {
     value: function highlightTargetTile(x, y) {
       var highlightGraphic = new PIXI.Graphics();
       highlightGraphic.beginFill(0xCCCCCC);
-      highlightGraphic.lineStyle(2, 0x000000);
+      highlightGraphic.lineStyle(3, 0x000000, 0);
       var tilePosition = Utils.pixelToTilePosition(x, y);
-      highlightGraphic.drawRect(tilePosition[0] * Config.TILE_SIZE, tilePosition[1] * Config.TILE_SIZE, Config.TILE_SIZE, Config.TILE_SIZE);
+      highlightGraphic.drawRect(tilePosition[0] * Config.TILE_SIZE + 1, tilePosition[1] * Config.TILE_SIZE + 1, Config.TILE_SIZE - 2, Config.TILE_SIZE - 2);
       return highlightGraphic;
     }
   }, {
@@ -20255,9 +20255,9 @@ var GameBoard = function () {
     value: function highlightSourceTile(x, y) {
       var highlightGraphic = new PIXI.Graphics();
       highlightGraphic.beginFill(0x999999);
-      highlightGraphic.lineStyle(2, 0x000000);
+      highlightGraphic.lineStyle(3, 0x000000, 0);
       var tilePosition = Utils.pixelToTilePosition(x, y);
-      highlightGraphic.drawRect(tilePosition[0] * Config.TILE_SIZE, tilePosition[1] * Config.TILE_SIZE, Config.TILE_SIZE, Config.TILE_SIZE);
+      highlightGraphic.drawRect(tilePosition[0] * Config.TILE_SIZE + 1, tilePosition[1] * Config.TILE_SIZE + 1, Config.TILE_SIZE - 2, Config.TILE_SIZE - 2);
       return highlightGraphic;
     }
   }, {
