@@ -20207,8 +20207,9 @@ var GameBoard = function () {
         this.selectPlayer(position.x, position.y);
       } else if (this.selectedPlayer) {
         var tilePosition = Utils.pixelToTilePosition(position.x, position.y);
-        console.log(tilePosition, this.selectedPlayer);
-        if (tilePosition.x === this.selectedPlayer.x && tilePosition.y === this.selectedPlayer.y) {
+        if (player && player != this.selectedPlayer) {
+          console.log("can't move on top of another player");
+        } else if (tilePosition.x === this.selectedPlayer.x && tilePosition.y === this.selectedPlayer.y) {
           this.pickupBall(position.x, position.y);
         } else {
           this.movePlayer(tilePosition.x, tilePosition.y);
