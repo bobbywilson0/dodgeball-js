@@ -1,8 +1,6 @@
 have to have:
   - limit token movement
-  - attacking
-    - throwing
-    - removing token from board
+  - removing token from board
 
 nice to have:
   - neutral zone tiles
@@ -26,4 +24,5 @@ done:
   - two players can't be on same tile
   - add actions
     - switch turns after x actions
-
+  - attacking
+    - throwing

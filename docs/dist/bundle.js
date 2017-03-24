@@ -20106,6 +20106,7 @@ var Ball = function () {
   function Ball(x, y, id) {
     _classCallCheck(this, Ball);
 
+    this.id = id;
     var greenCircle = this.circleTexture(0x00FF00);
     var graphic = void 0;
 
@@ -20216,7 +20217,16 @@ var GameBoard = function () {
       } else if (this.selectedPlayer) {
         var tilePosition = Utils.pixelToTilePosition(position.x, position.y);
         if (player && player != this.selectedPlayer) {
-          console.log("can't move on top of another player");
+          if (player.team == this.gameState.state.turn) {
+            console.log("can't move on top of another player");
+          } else if (this.selectedPlayer.hasBall) {
+            this.actionCount += 1;
+            var ball = this.selectedPlayerObject().throwBallAt(player);
+            var unit = this.gameState.state.units[ball.id];
+            unit.x = player.x;
+            unit.y = player.y;
+            this.tokenContainer.addChild(ball.sprite);
+          }
         } else if (tilePosition.x === this.selectedPlayer.x && tilePosition.y === this.selectedPlayer.y) {
           this.pickupBall(position.x, position.y);
         } else {
@@ -20237,7 +20247,11 @@ var GameBoard = function () {
     key: 'movePlayer',
     value: function movePlayer(x, y) {
       this.actionCount += 1;
-      this.gameState.movePlayer(this.selectedPlayer, x, y);
+      this.gameState.moveUnit(this.selectedPlayer, x, y);
+      if (this.selectedPlayer.hasBall) {
+        var ball = this.gameState.getBall(x, y);
+        this.gameState.moveUnit(ball, x, y);
+      }
       var newPos = Utils.tileToPixelPosition(x, y);
       var player = this.players[this.gameState.state.turn][this.selectedPlayer.id];
       player.moveTo(newPos.x, newPos.y);
@@ -20252,6 +20266,7 @@ var GameBoard = function () {
         this.tokenContainer.removeChild(currentBall);
         var player = this.players[this.gameState.state.turn][this.selectedPlayer.id];
         player.pickupBall(currentBall);
+        this.selectedPlayer['hasBall'] = true;
       }
     }
   }, {
@@ -20274,6 +20289,11 @@ var GameBoard = function () {
       } else {
         this.gameState.state.turn = 'red';
       }
+    }
+  }, {
+    key: 'selectedPlayerObject',
+    value: function selectedPlayerObject() {
+      return this.players[this.gameState.state.turn][this.selectedPlayer.id];
     }
   }, {
     key: 'highlightTargetTile',
@@ -20358,14 +20378,11 @@ var GameState = function () {
       return this.state.turn;
     }
   }, {
-    key: 'movePlayer',
-    value: function movePlayer(unit, x, y) {
+    key: 'moveUnit',
+    value: function moveUnit(unit, x, y) {
       if (unit) {
-        var activeTeam = this.state.turn;
-        if (unit.team === activeTeam) {
-          unit.x = x;
-          unit.y = y;
-        }
+        unit.x = x;
+        unit.y = y;
       }
     }
   }, {
@@ -20433,8 +20450,9 @@ var Player = function () {
 
     var redCircle = this.rectangleTexture(0xFF0000);
     var blueCircle = this.rectangleTexture(0x0000FF);
-
     var graphic = void 0;
+
+    this.ball = undefined;
 
     if (team === 'blue') {
       graphic = blueCircle;
@@ -20491,7 +20509,25 @@ var Player = function () {
     value: function pickupBall(ball) {
       ball.sprite.x = -10;
       ball.sprite.y = 0;
+      this.ball = ball;
       this.sprite.addChild(ball.sprite);
+    }
+  }, {
+    key: 'throwBallAt',
+    value: function throwBallAt(player) {
+      var ball = this.ball;
+      var pixelPosition = Utils.tileToPixelPosition(player.x, player.y);
+      TweenLite.fromTo(ball.sprite, 0.5, { x: this.sprite.x, y: this.sprite.y }, { x: pixelPosition.x, y: pixelPosition.y, ease: Power4.easeOut });
+      this.ball = undefined;
+      this.sprite.removeChild(ball.sprite);
+      var r = Math.floor(Math.random() * 2);
+      console.log(r);
+      if (r === 1) {
+        console.log('hit');
+      } else {
+        console.log('miss');
+      }
+      return ball;
     }
   }]);
 
@@ -37770,14 +37806,14 @@ function resize() {
 var tiles = {
   turn: 'blue',
   units: {
-    '1': { id: '1', x: 0, y: 0, type: 'player', team: 'blue' },
-    '2': { id: '2', x: 0, y: 2, type: 'player', team: 'blue' },
-    '3': { id: '3', x: 0, y: 4, type: 'player', team: 'blue' },
-    '4': { id: '4', x: 0, y: 6, type: 'player', team: 'blue' },
-    '5': { id: '5', x: 6, y: 0, type: 'player', team: 'red' },
-    '6': { id: '6', x: 6, y: 2, type: 'player', team: 'red' },
-    '7': { id: '7', x: 6, y: 4, type: 'player', team: 'red' },
-    '8': { id: '8', x: 6, y: 6, type: 'player', team: 'red' },
+    '1': { id: '1', x: 0, y: 0, type: 'player', team: 'blue', hasBall: false },
+    '2': { id: '2', x: 0, y: 2, type: 'player', team: 'blue', hasBall: false },
+    '3': { id: '3', x: 0, y: 4, type: 'player', team: 'blue', hasBall: false },
+    '4': { id: '4', x: 0, y: 6, type: 'player', team: 'blue', hasBall: false },
+    '5': { id: '5', x: 6, y: 0, type: 'player', team: 'red', hasBall: false },
+    '6': { id: '6', x: 6, y: 2, type: 'player', team: 'red', hasBall: false },
+    '7': { id: '7', x: 6, y: 4, type: 'player', team: 'red', hasBall: false },
+    '8': { id: '8', x: 6, y: 6, type: 'player', team: 'red', hasBall: false },
     '9': { id: '9', x: 3, y: 0, type: 'ball' },
     '10': { id: '10', x: 3, y: 2, type: 'ball' },
     '11': { id: '11', x: 3, y: 4, type: 'ball' },

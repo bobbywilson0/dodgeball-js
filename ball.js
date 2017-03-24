@@ -4,6 +4,7 @@ const Utils = require('./utils')
 class Ball {
 
   constructor(x, y, id) {
+    this.id = id
     let greenCircle = this.circleTexture(0x00FF00)
     let graphic
 

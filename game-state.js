@@ -9,13 +9,10 @@ class GameState {
     return this.state.turn
   }
 
-  movePlayer (unit, x, y) {
+  moveUnit (unit, x, y) {
     if (unit) {
-      let activeTeam = this.state.turn
-      if (unit.team === activeTeam) {
-        unit.x = x
-        unit.y = y
-      }
+      unit.x = x
+      unit.y = y
     }
   }
 
