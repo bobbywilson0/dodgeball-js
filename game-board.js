@@ -32,7 +32,6 @@ class GameBoard {
       this.selectPlayer(position.x, position.y)
     } else if (this.selectedPlayer) {
       let tilePosition = Utils.pixelToTilePosition(position.x, position.y)
-      console.log(tilePosition, this.selectedPlayer)
       if (tilePosition.x === this.selectedPlayer.x && tilePosition.y === this.selectedPlayer.y) {
         this.pickupBall(position.x, position.y)
       } else {
