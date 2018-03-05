@@ -71,21 +71,21 @@ export default class Player {
       .generateCanvasTexture();
   }
 
-  public moveTo(x: number, y: number) {
+  public moveTo(x: number, y: number): void {
     this.x = x;
     this.y = y;
     const pixelPosition = Utils.tileToPixelPosition(x, y);
     TweenLite.to(this.sprite, 0.5, {x: pixelPosition.x, y: pixelPosition.y, ease: Back.easeOut.config(1.7)});
   }
 
-  public pickupBall(ball: Ball) {
+  public pickupBall(ball: Ball): void {
     ball.sprite.x = -10;
     ball.sprite.y = 0;
     this.ball = ball;
     this.sprite.addChild(ball.sprite);
   }
 
-  public throwBallAt(player) {
+  public throwBallAt(player): IOutcome {
     const ball: Ball = this.ball!;
     console.log(player);
     const pixelPosition = Utils.tileToPixelPosition(player.x, player.y);

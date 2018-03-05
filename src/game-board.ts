@@ -86,13 +86,13 @@ export default class GameBoard {
     }
   }
 
-  public selectPlayer(x, y) {
+  public selectPlayer(x, y): void {
     this.selectedPlayer = this.gameState.getPlayer(x, y);
     this.sourceHighlight = this.highlightSourceTile(x, y);
     this.highlightContainer.addChild(this.sourceHighlight);
   }
 
-  public movePlayer(x, y) {
+  public movePlayer(x, y): void {
     this.actionCount += 1;
     this.gameState.moveUnit(this.selectedPlayer, x, y);
     if (this.selectedPlayer.hasBall) {
@@ -103,7 +103,7 @@ export default class GameBoard {
     player.moveTo(x, y);
   }
 
-  public pickupBall(x, y) {
+  public pickupBall(x, y): void {
     this.actionCount += 1;
     const ball: undefined | Ball = this.gameState.getBall(x, y);
     if (ball !== undefined) {
@@ -116,7 +116,7 @@ export default class GameBoard {
     }
   }
 
-  public handleMouseMove() {
+  public handleMouseMove(): void {
     if (this.selectedPlayer) {
       const newPosition = this.eventData.getLocalPosition(this.stage);
       if (this.targetHighlight) {
@@ -127,7 +127,7 @@ export default class GameBoard {
     }
   }
 
-  public switchTurns() {
+  public switchTurns(): void {
     if (this.gameState.state.turn === "red") {
       this.gameState.state.turn = "blue";
     } else {
@@ -135,11 +135,11 @@ export default class GameBoard {
     }
   }
 
-  public selectedPlayerObject() {
+  public selectedPlayerObject(): Player {
     return this.players[this.selectedPlayer.id];
   }
 
-  public highlightTargetTile(x, y) {
+  public highlightTargetTile(x, y): Graphics {
     const highlightGraphic = new PIXI.Graphics();
     highlightGraphic.beginFill(0xCCCCCC);
     highlightGraphic.lineStyle(3, 0x000000, 0);
@@ -153,7 +153,7 @@ export default class GameBoard {
     return highlightGraphic;
   }
 
-  public highlightSourceTile(x, y) {
+  public highlightSourceTile(x, y): Graphics {
     const highlightGraphic = new PIXI.Graphics();
     highlightGraphic.beginFill(0x999999);
     highlightGraphic.lineStyle(3, 0x000000, 0);
@@ -167,7 +167,7 @@ export default class GameBoard {
     return highlightGraphic;
   }
 
-  public drawBoard(height, width, tileSize) {
+  public drawBoard(height, width, tileSize): void {
     const boardGraphics = new PIXI.Graphics();
     boardGraphics.beginFill(0xFFFFFF);
 
@@ -192,7 +192,7 @@ export default class GameBoard {
     this.stage.addChild(boardGraphics);
   }
 
-  public addToken(player) {
+  public addToken(player): void {
     this.tokenContainer.addChild(player);
   }
 }
