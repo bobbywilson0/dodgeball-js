@@ -1,56 +1,55 @@
-import * as Utils from './utils';
-import Player from './player';
-import each from 'lodash-es/each';
+import each from "lodash-es/each";
+import Player from "./player";
+import * as Utils from "./utils";
 
 class GameState {
-  state: any[any];
+  public state: any[any];
 
   constructor(tiles) {
-    this.state = tiles
+    this.state = tiles;
   }
 
-  getCurrentTeam () {
-    return this.state.turn
+  public getCurrentTeam() {
+    return this.state.turn;
   }
 
-  moveUnit (unit, x, y) {
+  public moveUnit(unit, x, y) {
     if (unit) {
-      unit.x = x
-      unit.y = y
+      unit.x = x;
+      unit.y = y;
     }
   }
 
-  getBall (x, y) {
-    let _unit
-    each(this.getUnitsAt(x, y), (unit, id) => {
-      if (unit.type === 'ball') {
-        _unit = unit
+  public getBall(x, y) {
+    let unit;
+    each(this.getUnitsAt(x, y), (u, id) => {
+      if (u.type === "ball") {
+        unit = u;
       }
-    })
-    return _unit
+    });
+    return unit;
   }
 
-  getPlayer(x, y) {
-    let _unit: undefined | Player = undefined;
-    each(this.getUnitsAt(x, y), (unit, id) => {
-      if (unit.type === 'player') {
-        _unit = unit
+  public getPlayer(x, y) {
+    let unit: undefined | Player;
+    each(this.getUnitsAt(x, y), (u, id) => {
+      if (u.type === "player") {
+        unit = u;
       }
-    })
-    return _unit;
+    });
+    return unit;
   }
 
-  getUnitsAt (x, y) {
-    let units = {}
-    each(this.state.units, function(unit, id) {
-      let ptt = Utils.pixelToTilePosition(x, y)
+  public getUnitsAt(x, y) {
+    const units = {};
+    each(this.state.units, (unit, id) => {
+      const ptt = Utils.pixelToTilePosition(x, y);
       if (unit.x === ptt.x && unit.y === ptt.y) {
-        units[id] = unit
+        units[id] = unit;
       }
-    })
-    return units
+    });
+    return units;
   }
 }
 
-export default GameState
-
+export default GameState;
