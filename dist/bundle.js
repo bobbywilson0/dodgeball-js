@@ -33212,16 +33212,14 @@ var Ball = /** @class */ (function () {
         sprite.y = position.y;
         sprite.interactive = true;
         var textStyle = new PIXI.TextStyle({
+            fill: "#ffffff",
             fontSize: 13,
-            fill: '#ffffff'
         });
         var idText = new PIXI.Text(id, textStyle);
         idText.y = -7;
         idText.x = -3;
         sprite.addChild(idText);
         this.sprite = sprite;
-        sprite.on('click', function (event) {
-        });
     }
     Ball.prototype.circleTexture = function (hexColor) {
         var graphic = new PIXI.Graphics();
@@ -33240,10 +33238,10 @@ var Ball = /** @class */ (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__utils__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__config__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__config__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__utils__);
 
 
 var GameBoard = /** @class */ (function () {
@@ -33256,14 +33254,14 @@ var GameBoard = /** @class */ (function () {
         this.balls = balls;
         this.gameState = gameState;
         this.actionCount = 0;
-        this.drawBoard(__WEBPACK_IMPORTED_MODULE_1__config__["BOARD_WIDTH"], __WEBPACK_IMPORTED_MODULE_1__config__["BOARD_HEIGHT"], __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"]);
+        this.drawBoard(__WEBPACK_IMPORTED_MODULE_0__config__["BOARD_WIDTH"], __WEBPACK_IMPORTED_MODULE_0__config__["BOARD_HEIGHT"], __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"]);
         stage.addChild(this.highlightContainer);
         stage.addChild(this.tokenContainer);
         this.eventData = undefined;
         this.selectedPlayer = undefined;
-        stage.on('click', function (event) { return _this.handleClickEvent(event); });
-        stage.on('touchend', function (event) { return _this.handleClickEvent(event); });
-        stage.on('mousemove', function () { return _this.handleMouseMove(); });
+        stage.on("click", function (event) { return _this.handleClickEvent(event); });
+        stage.on("touchend", function (event) { return _this.handleClickEvent(event); });
+        stage.on("mousemove", function () { return _this.handleMouseMove(); });
     }
     GameBoard.prototype.handleClickEvent = function (event) {
         if (this.actionCount > 1) {
@@ -33279,9 +33277,9 @@ var GameBoard = /** @class */ (function () {
             this.selectPlayer(position.x, position.y);
         }
         else if (this.selectedPlayer) {
-            var tilePosition = __WEBPACK_IMPORTED_MODULE_0__utils__["pixelToTilePosition"](position.x, position.y);
-            if (player && player != this.selectedPlayer) {
-                if (player.team == this.gameState.state.turn) {
+            var tilePosition = __WEBPACK_IMPORTED_MODULE_1__utils__["pixelToTilePosition"](position.x, position.y);
+            if (player && player !== this.selectedPlayer) {
+                if (player.team === this.gameState.state.turn) {
                     console.log("can't move on top of another player");
                 }
                 else if (this.selectedPlayer.hasBall) {
@@ -33294,10 +33292,10 @@ var GameBoard = /** @class */ (function () {
                     unit.y = player.y;
                     this.tokenContainer.addChild(ball.sprite);
                     if (outcome.hit) {
-                        var player_1 = this.gameState.state.units[pPlayer.id];
-                        player_1.out = true;
-                        player_1.x = pPlayer.x;
-                        player_1.y = pPlayer.y;
+                        player = this.gameState.state.units[pPlayer.id];
+                        player.out = true;
+                        player.x = pPlayer.x;
+                        player.y = pPlayer.y;
                     }
                 }
             }
@@ -33334,7 +33332,7 @@ var GameBoard = /** @class */ (function () {
             this.tokenContainer.removeChild(currentBall);
             var player = this.players[this.selectedPlayer.id];
             player.pickupBall(currentBall);
-            this.selectedPlayer['hasBall'] = true;
+            this.selectedPlayer.hasBall = true;
         }
     };
     GameBoard.prototype.handleMouseMove = function () {
@@ -33348,11 +33346,11 @@ var GameBoard = /** @class */ (function () {
         }
     };
     GameBoard.prototype.switchTurns = function () {
-        if (this.gameState.state.turn == 'red') {
-            this.gameState.state.turn = 'blue';
+        if (this.gameState.state.turn === "red") {
+            this.gameState.state.turn = "blue";
         }
         else {
-            this.gameState.state.turn = 'red';
+            this.gameState.state.turn = "red";
         }
     };
     GameBoard.prototype.selectedPlayerObject = function () {
@@ -33362,16 +33360,16 @@ var GameBoard = /** @class */ (function () {
         var highlightGraphic = new PIXI.Graphics();
         highlightGraphic.beginFill(0xCCCCCC);
         highlightGraphic.lineStyle(3, 0x000000, 0);
-        var tilePosition = __WEBPACK_IMPORTED_MODULE_0__utils__["pixelToTilePosition"](x, y);
-        highlightGraphic.drawRect(tilePosition.x * __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"] + 1, tilePosition.y * __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"] + 1, __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"] - 2, __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"] - 2);
+        var tilePosition = __WEBPACK_IMPORTED_MODULE_1__utils__["pixelToTilePosition"](x, y);
+        highlightGraphic.drawRect(tilePosition.x * __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"] + 1, tilePosition.y * __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"] + 1, __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"] - 2, __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"] - 2);
         return highlightGraphic;
     };
     GameBoard.prototype.highlightSourceTile = function (x, y) {
         var highlightGraphic = new PIXI.Graphics();
         highlightGraphic.beginFill(0x999999);
         highlightGraphic.lineStyle(3, 0x000000, 0);
-        var tilePosition = __WEBPACK_IMPORTED_MODULE_0__utils__["pixelToTilePosition"](x, y);
-        highlightGraphic.drawRect(tilePosition.x * __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"] + 1, tilePosition.y * __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"] + 1, __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"] - 2, __WEBPACK_IMPORTED_MODULE_1__config__["TILE_SIZE"] - 2);
+        var tilePosition = __WEBPACK_IMPORTED_MODULE_1__utils__["pixelToTilePosition"](x, y);
+        highlightGraphic.drawRect(tilePosition.x * __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"] + 1, tilePosition.y * __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"] + 1, __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"] - 2, __WEBPACK_IMPORTED_MODULE_0__config__["TILE_SIZE"] - 2);
         return highlightGraphic;
     };
     GameBoard.prototype.drawBoard = function (height, width, tileSize) {
@@ -33406,9 +33404,9 @@ var GameBoard = /** @class */ (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__utils__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_es_each__ = __webpack_require__(127);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_es_each__ = __webpack_require__(127);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__utils__);
 
 
 var GameState = /** @class */ (function () {
@@ -33425,27 +33423,27 @@ var GameState = /** @class */ (function () {
         }
     };
     GameState.prototype.getBall = function (x, y) {
-        var _unit;
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_lodash_es_each__["a" /* default */])(this.getUnitsAt(x, y), function (unit, id) {
-            if (unit.type === 'ball') {
-                _unit = unit;
+        var unit;
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_es_each__["a" /* default */])(this.getUnitsAt(x, y), function (u, id) {
+            if (u.type === "ball") {
+                unit = u;
             }
         });
-        return _unit;
+        return unit;
     };
     GameState.prototype.getPlayer = function (x, y) {
-        var _unit = undefined;
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_lodash_es_each__["a" /* default */])(this.getUnitsAt(x, y), function (unit, id) {
-            if (unit.type === 'player') {
-                _unit = unit;
+        var unit;
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_es_each__["a" /* default */])(this.getUnitsAt(x, y), function (u, id) {
+            if (u.type === "player") {
+                unit = u;
             }
         });
-        return _unit;
+        return unit;
     };
     GameState.prototype.getUnitsAt = function (x, y) {
         var units = {};
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_lodash_es_each__["a" /* default */])(this.state.units, function (unit, id) {
-            var ptt = __WEBPACK_IMPORTED_MODULE_0__utils__["pixelToTilePosition"](x, y);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_es_each__["a" /* default */])(this.state.units, function (unit, id) {
+            var ptt = __WEBPACK_IMPORTED_MODULE_1__utils__["pixelToTilePosition"](x, y);
             if (unit.x === ptt.x && unit.y === ptt.y) {
                 units[id] = unit;
             }
@@ -33462,10 +33460,10 @@ var GameState = /** @class */ (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__utils__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_gsap__ = __webpack_require__(106);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_gsap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_gsap__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_gsap__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_gsap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_gsap__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__utils__);
 
 
 var Player = /** @class */ (function () {
@@ -33478,25 +33476,25 @@ var Player = /** @class */ (function () {
         this.id = id;
         this.ball = undefined;
         this.team = team;
-        if (team === 'blue') {
+        if (team === "blue") {
             graphic = blueCircle;
         }
-        else if (team === 'red') {
+        else if (team === "red") {
             graphic = redCircle;
         }
         var sprite = new PIXI.Sprite(graphic);
         var head = new PIXI.Sprite(this.headTexture());
         head.anchor.set(0.5, 1.2);
         sprite.anchor.set(0.5);
-        var position = __WEBPACK_IMPORTED_MODULE_0__utils__["tileToPixelPosition"](x, y);
+        var position = __WEBPACK_IMPORTED_MODULE_1__utils__["tileToPixelPosition"](x, y);
         sprite.x = position.x;
         sprite.y = position.y;
         sprite.interactive = interactive;
         sprite.buttonMode = interactive;
         sprite.addChild(head);
         var textStyle = new PIXI.TextStyle({
+            fill: "#ffffff",
             fontSize: 13,
-            fill: '#ffffff'
         });
         var idText = new PIXI.Text(id, textStyle);
         idText.y = -7;
@@ -33523,8 +33521,8 @@ var Player = /** @class */ (function () {
     Player.prototype.moveTo = function (x, y) {
         this.x = x;
         this.y = y;
-        var pixelPosition = __WEBPACK_IMPORTED_MODULE_0__utils__["tileToPixelPosition"](x, y);
-        __WEBPACK_IMPORTED_MODULE_1_gsap__["TweenLite"].to(this.sprite, 0.5, { x: pixelPosition.x, y: pixelPosition.y, ease: __WEBPACK_IMPORTED_MODULE_1_gsap__["Back"].easeOut.config(1.7) });
+        var pixelPosition = __WEBPACK_IMPORTED_MODULE_1__utils__["tileToPixelPosition"](x, y);
+        __WEBPACK_IMPORTED_MODULE_0_gsap__["TweenLite"].to(this.sprite, 0.5, { x: pixelPosition.x, y: pixelPosition.y, ease: __WEBPACK_IMPORTED_MODULE_0_gsap__["Back"].easeOut.config(1.7) });
     };
     Player.prototype.pickupBall = function (ball) {
         ball.sprite.x = -10;
@@ -33535,8 +33533,8 @@ var Player = /** @class */ (function () {
     Player.prototype.throwBallAt = function (player) {
         var ball = this.ball;
         console.log(player);
-        var pixelPosition = __WEBPACK_IMPORTED_MODULE_0__utils__["tileToPixelPosition"](player.x, player.y);
-        __WEBPACK_IMPORTED_MODULE_1_gsap__["TweenLite"].fromTo(ball.sprite, 0.5, { x: this.sprite.x, y: this.sprite.y }, { x: pixelPosition.x, y: pixelPosition.y, ease: __WEBPACK_IMPORTED_MODULE_1_gsap__["Power4"].easeOut });
+        var pixelPosition = __WEBPACK_IMPORTED_MODULE_1__utils__["tileToPixelPosition"](player.x, player.y);
+        __WEBPACK_IMPORTED_MODULE_0_gsap__["TweenLite"].fromTo(ball.sprite, 0.5, { x: this.sprite.x, y: this.sprite.y }, { x: pixelPosition.x, y: pixelPosition.y, ease: __WEBPACK_IMPORTED_MODULE_0_gsap__["Power4"].easeOut });
         this.ball = undefined;
         this.sprite.removeChild(ball.sprite);
         var r = Math.floor(Math.random() * 2);
@@ -33544,7 +33542,7 @@ var Player = /** @class */ (function () {
         if (r === 1) {
             player.x = -1;
             player.y = -1;
-            __WEBPACK_IMPORTED_MODULE_1_gsap__["TweenLite"].to(player.sprite, 0.5, { x: 0, y: -200 });
+            __WEBPACK_IMPORTED_MODULE_0_gsap__["TweenLite"].to(player.sprite, 0.5, { x: 0, y: -200 });
             outcome.hit = true;
         }
         else {
@@ -59073,16 +59071,16 @@ module.exports = {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_pixi_js__ = __webpack_require__(101);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_pixi_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_pixi_js__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(100);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__config__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__player__ = __webpack_require__(105);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ball__ = __webpack_require__(102);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_pixi_js__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_pixi_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_pixi_js__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ball__ = __webpack_require__(102);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__config__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__game_board__ = __webpack_require__(103);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__game_state__ = __webpack_require__(104);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__game_board__ = __webpack_require__(103);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__player__ = __webpack_require__(105);
 
 
 
@@ -59090,66 +59088,65 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var BOARD_HEIGHT = __WEBPACK_IMPORTED_MODULE_2__config__["BOARD_HEIGHT"];
-var BOARD_WIDTH = __WEBPACK_IMPORTED_MODULE_2__config__["BOARD_WIDTH"];
-var TILE_SIZE = __WEBPACK_IMPORTED_MODULE_2__config__["TILE_SIZE"];
+var BOARD_HEIGHT = __WEBPACK_IMPORTED_MODULE_3__config__["BOARD_HEIGHT"];
+var BOARD_WIDTH = __WEBPACK_IMPORTED_MODULE_3__config__["BOARD_WIDTH"];
+var TILE_SIZE = __WEBPACK_IMPORTED_MODULE_3__config__["TILE_SIZE"];
 var GAME_WIDTH = BOARD_WIDTH * TILE_SIZE;
 var GAME_HEIGHT = BOARD_HEIGHT * TILE_SIZE;
-var renderer = __WEBPACK_IMPORTED_MODULE_0_pixi_js__["autoDetectRenderer"](BOARD_WIDTH * TILE_SIZE, BOARD_HEIGHT * TILE_SIZE, { antialias: true,
+var renderer = __WEBPACK_IMPORTED_MODULE_1_pixi_js__["autoDetectRenderer"](BOARD_WIDTH * TILE_SIZE, BOARD_HEIGHT * TILE_SIZE, { antialias: true,
     autoResize: true,
-    resolution: window.devicePixelRatio
+    resolution: window.devicePixelRatio,
 });
-renderer.view.style.position = 'absolute';
-renderer.view.style.top = '0px';
-renderer.view.style.left = '0px';
-var stage = new __WEBPACK_IMPORTED_MODULE_0_pixi_js__["Container"]();
+renderer.view.style.position = "absolute";
+renderer.view.style.top = "0px";
+renderer.view.style.left = "0px";
+var stage = new __WEBPACK_IMPORTED_MODULE_1_pixi_js__["Container"]();
 stage.interactive = true;
 function resize() {
-    //let yRatio = window.innerHeight / GAME_HEIGHT
     var xRatio = window.innerWidth / GAME_WIDTH;
     stage.scale.y = xRatio;
     stage.scale.x = xRatio;
     renderer.resize(window.innerWidth, window.innerHeight);
 }
 var tiles = {
-    turn: 'blue',
+    turn: "blue",
     units: {
-        '1': { id: '1', x: 0, y: 0, type: 'player', team: 'blue', hasBall: false },
-        '2': { id: '2', x: 0, y: 2, type: 'player', team: 'blue', hasBall: false },
-        '3': { id: '3', x: 0, y: 4, type: 'player', team: 'blue', hasBall: false },
-        '4': { id: '4', x: 0, y: 6, type: 'player', team: 'blue', hasBall: false },
-        '5': { id: '5', x: 6, y: 0, type: 'player', team: 'red', hasBall: false },
-        '6': { id: '6', x: 6, y: 2, type: 'player', team: 'red', hasBall: false },
-        '7': { id: '7', x: 6, y: 4, type: 'player', team: 'red', hasBall: false },
-        '8': { id: '8', x: 6, y: 6, type: 'player', team: 'red', hasBall: false },
-        '9': { id: '9', x: 3, y: 0, type: 'ball' },
-        '10': { id: '10', x: 3, y: 2, type: 'ball' },
-        '11': { id: '11', x: 3, y: 4, type: 'ball' },
-        '12': { id: '12', x: 3, y: 6, type: 'ball' }
-    }
+        1: { id: "1", x: 0, y: 0, type: "player", team: "blue", hasBall: false },
+        2: { id: "2", x: 0, y: 2, type: "player", team: "blue", hasBall: false },
+        3: { id: "3", x: 0, y: 4, type: "player", team: "blue", hasBall: false },
+        4: { id: "4", x: 0, y: 6, type: "player", team: "blue", hasBall: false },
+        5: { id: "5", x: 6, y: 0, type: "player", team: "red", hasBall: false },
+        6: { id: "6", x: 6, y: 2, type: "player", team: "red", hasBall: false },
+        7: { id: "7", x: 6, y: 4, type: "player", team: "red", hasBall: false },
+        8: { id: "8", x: 6, y: 6, type: "player", team: "red", hasBall: false },
+        9: { id: "9", x: 3, y: 0, type: "ball" },
+        10: { id: "10", x: 3, y: 2, type: "ball" },
+        11: { id: "11", x: 3, y: 4, type: "ball" },
+        12: { id: "12", x: 3, y: 6, type: "ball" },
+    },
 };
 var gameState = new __WEBPACK_IMPORTED_MODULE_5__game_state__["a" /* default */](tiles);
 var players = {};
 var balls = {};
-var gameBoard = new __WEBPACK_IMPORTED_MODULE_6__game_board__["a" /* default */](stage, gameState, players, balls);
+var gameBoard = new __WEBPACK_IMPORTED_MODULE_4__game_board__["a" /* default */](stage, gameState, players, balls);
 function animate() {
     renderer.render(stage);
     window.requestAnimationFrame(animate);
 }
 function setup() {
-    __WEBPACK_IMPORTED_MODULE_1_lodash__["forEach"](gameState.state.units, function (p, id) {
-        if (p.team === 'blue') {
-            var player = new __WEBPACK_IMPORTED_MODULE_3__player__["a" /* default */](p.x, p.y, id, 'blue', true);
+    __WEBPACK_IMPORTED_MODULE_0_lodash__["forEach"](gameState.state.units, function (p, id) {
+        if (p.team === "blue") {
+            var player = new __WEBPACK_IMPORTED_MODULE_6__player__["a" /* default */](p.x, p.y, id, "blue", true);
             players[id] = player;
             gameBoard.addToken(player.sprite);
         }
-        else if (p.team === 'red') {
-            var player = new __WEBPACK_IMPORTED_MODULE_3__player__["a" /* default */](p.x, p.y, id, 'red', true);
+        else if (p.team === "red") {
+            var player = new __WEBPACK_IMPORTED_MODULE_6__player__["a" /* default */](p.x, p.y, id, "red", true);
             players[id] = player;
             gameBoard.addToken(player.sprite);
         }
         else {
-            var ball = new __WEBPACK_IMPORTED_MODULE_4__ball__["a" /* default */](p.x, p.y, id);
+            var ball = new __WEBPACK_IMPORTED_MODULE_2__ball__["a" /* default */](p.x, p.y, id);
             balls[id] = ball;
             gameBoard.addToken(ball.sprite);
         }

@@ -51,7 +51,7 @@ export default class GameBoard {
 
     this.highlightContainer.removeChild(this.targetHighlight);
     const position = event.data.getLocalPosition(this.stage);
-    const player: undefined | any = this.gameState.getPlayer(position.x, position.y);
+    let player: undefined | any = this.gameState.getPlayer(position.x, position.y);
     if (!this.selectedPlayer && player && player.team === this.gameState.state.turn) {
       this.selectPlayer(position.x, position.y);
     } else if (this.selectedPlayer) {
