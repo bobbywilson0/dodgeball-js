@@ -1,18 +1,23 @@
-import {Back, Power4, TweenLite} from "gsap";
-import { Sprite } from "pixi.js";
-import * as Ball from "./ball";
+import {Back, Power4, TweenLite, Tween} from "gsap";
+import { Sprite, Graphics, Texture } from "pixi.js";
+import Ball from "./ball";
 import * as Config from "./config";
 import * as Utils from "./utils";
+
+interface IOutcome {
+  ball: undefined | Ball;
+  hit: undefined | boolean;
+}
 
 export default class Player {
   public x: number;
   public y: number;
   public id: string;
-  public ball: undefined | any;
+  public ball: undefined | Ball;
   public sprite: Sprite;
   public team: string;
 
-  constructor(x, y, id, team, interactive) {
+  constructor(x: number, y: number, id :string, team: string, interactive) {
     const redCircle = this.rectangleTexture(0xFF0000);
     const blueCircle = this.rectangleTexture(0x0000FF);
     let graphic;
@@ -52,7 +57,7 @@ export default class Player {
     this.sprite = sprite;
   }
 
-  public rectangleTexture(hexColor) {
+  public rectangleTexture(hexColor: number): Texture {
     const graphic = new PIXI.Graphics();
     graphic.beginFill(hexColor);
     return graphic
@@ -60,7 +65,7 @@ export default class Player {
       .generateCanvasTexture();
   }
 
-  public headTexture() {
+  public headTexture(): Texture {
     const skinTones = [0x8d5524, 0xc68642, 0xe0ac69, 0xf1c27d, 0xffdbac];
     const graphic = new PIXI.Graphics();
     const randomSkinTone = skinTones[Math.floor(Math.random() * skinTones.length)];
@@ -70,14 +75,14 @@ export default class Player {
       .generateCanvasTexture();
   }
 
-  public moveTo(x, y) {
+  public moveTo(x: number, y: number) {
     this.x = x;
     this.y = y;
     const pixelPosition = Utils.tileToPixelPosition(x, y);
     TweenLite.to(this.sprite, 0.5, {x: pixelPosition.x, y: pixelPosition.y, ease: Back.easeOut.config(1.7)});
   }
 
-  public pickupBall(ball) {
+  public pickupBall(ball: Ball) {
     ball.sprite.x = -10;
     ball.sprite.y = 0;
     this.ball = ball;
@@ -85,7 +90,7 @@ export default class Player {
   }
 
   public throwBallAt(player) {
-    const ball = this.ball;
+    const ball: undefined | Ball = this.ball;
     console.log(player);
     const pixelPosition = Utils.tileToPixelPosition(player.x, player.y);
     TweenLite.fromTo(
@@ -95,9 +100,11 @@ export default class Player {
       { x: pixelPosition.x, y: pixelPosition.y, ease: Power4.easeOut },
     );
     this.ball = undefined;
-    this.sprite.removeChild(ball.sprite);
+    if (ball) {
+      this.sprite.removeChild(ball.sprite);
+    }
     const r = Math.floor(Math.random() * 2);
-    const outcome: {ball: any, hit: undefined | boolean } = {ball, hit: undefined};
+    const outcome: IOutcome = { ball, hit: undefined };
     if ( r === 1) {
       player.x = -1;
       player.y = -1;

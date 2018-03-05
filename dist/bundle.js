@@ -33336,7 +33336,7 @@ var GameBoard = /** @class */ (function () {
         }
     };
     GameBoard.prototype.handleMouseMove = function () {
-        if (this.selected && this.selectedPlayer) {
+        if (this.selectedPlayer) {
             var newPosition = this.eventData.getLocalPosition(this.stage);
             if (this.targetHighlight) {
                 this.highlightContainer.removeChild(this.targetHighlight);

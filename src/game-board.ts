@@ -1,10 +1,15 @@
 import {TweenLite} from "gsap";
-import { Container, DisplayObject } from "pixi.js";
+import { Container, DisplayObject, Graphics } from "pixi.js";
 import Ball from "./ball";
 import * as Config from "./config";
 import GameState from "./game-state";
 import Player from "./player";
 import * as Utils from "./utils";
+
+interface IUnit {
+  x: number;
+  y: number;
+}
 
 export default class GameBoard {
   public tokenContainer: Container;
@@ -16,8 +21,8 @@ export default class GameBoard {
   public actionCount: number;
   public eventData: undefined | any;
   public selectedPlayer: undefined | any;
-  public targetHighlight: any;
-  public sourceHighlight: any;
+  public targetHighlight: Graphics;
+  public sourceHighlight: Graphics;
   public selected: any;
 
   constructor(stage, gameState, players, balls) {
@@ -96,7 +101,7 @@ export default class GameBoard {
     this.gameState.moveUnit(this.selectedPlayer, x, y);
     if (this.selectedPlayer.hasBall) {
       const ball = this.gameState.getBall(x, y);
-      this.gameState.moveUnit(ball, x, y);
+      this.gameState.moveUnit(ball as IUnit, x, y);
     }
     const player = this.players[this.selectedPlayer.id];
     player.moveTo(x, y);
@@ -116,7 +121,7 @@ export default class GameBoard {
   }
 
   public handleMouseMove() {
-    if (this.selected && this.selectedPlayer) {
+    if (this.selectedPlayer) {
       const newPosition = this.eventData.getLocalPosition(this.stage);
       if (this.targetHighlight) {
         this.highlightContainer.removeChild(this.targetHighlight);

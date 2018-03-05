@@ -6,9 +6,13 @@ class Ball {
   public id: string;
   public sprite: Sprite;
   public graphic: Graphics;
+  public x: number;
+  public y: number;
 
   constructor(x: number, y: number, id: string) {
     id = id;
+    x = x;
+    y = y;
 
     const greenCircle = this.circleTexture(0x00FF00);
     let graphic;
