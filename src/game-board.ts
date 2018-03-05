@@ -1,17 +1,33 @@
-let Utils = require('./utils')
-let Config = require('./config')
-require('gsap/TweenLite')
-require('gsap/EasePack')
+import * as Utils from './utils';
+import * as Config from './config';
+import {TweenLite} from 'gsap';
+import { Container, DisplayObject } from 'pixi.js';
+import GameState from './game-state';
+import Ball from './ball';
+import Player from './player';
 
-class GameBoard {
+export default class GameBoard {
+  tokenContainer: Container;
+  highlightContainer: Container;
+  stage: Container;
+  gameState: GameState;
+  players: any[];
+  balls: any[];
+  actionCount: number;
+  eventData: undefined | any;
+  selectedPlayer: undefined | any;
+  targetHighlight: any;
+  sourceHighlight: any;
+  selected: any;
+
   constructor(stage, gameState, players, balls) {
-    this.tokenContainer = new PIXI.Container()
-    this.highlightContainer = new PIXI.Container()
-    this.stage = stage
-    this.players = players
-    this.balls = balls
-    this.gameState = gameState
-    this.actionCount = 0
+    this.tokenContainer = new PIXI.Container();
+    this.highlightContainer = new PIXI.Container();
+    this.stage = stage;
+    this.players = players;
+    this.balls = balls;
+    this.gameState = gameState;
+    this.actionCount = 0;
 
     this.drawBoard(Config.BOARD_WIDTH, Config.BOARD_HEIGHT, Config.TILE_SIZE)
     stage.addChild(this.highlightContainer)
@@ -35,7 +51,7 @@ class GameBoard {
     
     this.highlightContainer.removeChild(this.targetHighlight)
     let position = event.data.getLocalPosition(this.stage)
-    let player = this.gameState.getPlayer(position.x, position.y)
+    let player: undefined | any = this.gameState.getPlayer(position.x, position.y)
     if (!this.selectedPlayer && player && player.team === this.gameState.state.turn) {
       this.selectPlayer(position.x, position.y)
     } else if (this.selectedPlayer) {
@@ -88,9 +104,10 @@ class GameBoard {
 
   pickupBall(x, y) {
     this.actionCount += 1
-    let ball = this.gameState.getBall(x, y)
-    let currentBall = this.balls[ball.id]
-    if (currentBall) {
+    let ball: undefined | Ball = this.gameState.getBall(x, y)
+    if (ball !== undefined) {
+      let currentBall: DisplayObject = this.balls[ball.id]
+    
       this.tokenContainer.removeChild(currentBall)
       let player = this.players[this.selectedPlayer.id]
       player.pickupBall(currentBall)
@@ -149,12 +166,12 @@ class GameBoard {
     return highlightGraphic
   }
 
-  drawBoard () {
+  drawBoard (height, width, tileSize) {
     let boardGraphics = new PIXI.Graphics()
     boardGraphics.beginFill(0xFFFFFF)
 
-    for (let i = 0; i < Config.BOARD_WIDTH; ++i) {
-      for (let j = 0; j < Config.BOARD_HEIGHT; ++j) {
+    for (let i = 0; i < width; ++i) {
+      for (let j = 0; j < height; ++j) {
         if (i <= 1) {
           boardGraphics.lineStyle(3, 0xccccff)
         } else if (i >= 5) {
@@ -164,10 +181,10 @@ class GameBoard {
         }
 
         boardGraphics.drawRect(
-          i * Config.TILE_SIZE,
-          j * Config.TILE_SIZE,
-          Config.TILE_SIZE,
-          Config.TILE_SIZE
+          i * tileSize,
+          j * tileSize,
+          tileSize,
+          tileSize
         )
       }
     }
@@ -178,5 +195,3 @@ class GameBoard {
     this.tokenContainer.addChild(player)
   }
 }
-
-export default GameBoard

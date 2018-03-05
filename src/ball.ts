@@ -1,10 +1,16 @@
-const Config = require('./config')
-const Utils = require('./utils')
+import * as Config from './config';
+import * as Utils from './utils';
+import { Sprite, Graphics } from 'pixi.js';
+
 
 class Ball {
+  id: string;
+  sprite: Sprite;
+  graphic: Graphics;
 
-  constructor(x, y, id) {
-    this.id = id
+  constructor(x: Number, y: Number, id: string) {
+    id = id;
+    
     let greenCircle = this.circleTexture(0x00FF00)
     let graphic
 

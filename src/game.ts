@@ -1,6 +1,6 @@
-let PIXI = require('pixi.js')
-let _ = require('lodash')
-let Config = require('./config')
+import * as PIXI from 'pixi.js';
+import * as _ from 'lodash';
+import * as Config from './config';
 import Player from './player'
 import Ball from './ball'
 import GameState from './game-state'

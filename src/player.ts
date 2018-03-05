@@ -1,7 +1,16 @@
-const Config = require('./config')
-const Utils = require('./utils')
+import * as Config from './config';
+import * as Utils from './utils';
+import * as Ball from './ball';
+import { Sprite } from 'pixi.js';
+import {TweenLite, Power4, Back} from 'gsap';
 
-class Player {
+export default class Player {
+  x: number;
+  y: number;
+  id: string;
+  ball: undefined | any;
+  sprite: Sprite;
+  team: string;
 
   constructor(x, y, id, team, interactive) {
     let redCircle = this.rectangleTexture(0xFF0000)
@@ -12,6 +21,7 @@ class Player {
     this.y = y
     this.id = id
     this.ball = undefined
+    this.team = team
 
     if (team === 'blue') {
       graphic = blueCircle
@@ -87,7 +97,7 @@ class Player {
     this.ball = undefined
     this.sprite.removeChild(ball.sprite)
     let r = Math.floor(Math.random() * 2)
-    let outcome = {ball: ball, hit: undefined}
+    let outcome: {ball: any, hit: undefined | boolean } = {ball: ball, hit: undefined}
     if ( r === 1) {
       player.x = -1
       player.y = -1
@@ -99,5 +109,3 @@ class Player {
     return outcome
   }
 }
-
-export default Player

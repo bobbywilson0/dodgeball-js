@@ -1,38 +1,25 @@
-var path = require('path');
-var webpack = require('webpack');
-
 module.exports = {
-  entry: './game.js',
+  // change to .tsx if necessary
+  entry: './src/game.ts',
   output: {
-    path: path.resolve(__dirname, 'docs/dist'),
-    publicPath: '/docs/dist/',
-    filename: 'bundle.js'
+    filename: './dist/bundle.js'
   },
-  devServer: {
-    compress: true
+  resolve: {
+    // changed from extensions: [".js", ".jsx"]
+    extensions: [".ts", ".tsx", ".js", ".jsx"]
   },
   module: {
     rules: [
-    {
-      test: /\.js$/,
-      exclude: /(node_modules|bower_components)/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          presets: ['env']
-        }
-      }
-    },
-    {
-      test: /\.json$/,
-      loader: 'json'
-    },
-    {
-      include: path.resolve(__dirname, 'node_modules/pixi.js'),
-      loader: 'transform-loader?brfs',
-      enforce: 'post'
-    }
+      // changed from { test: /\.jsx?$/, use: { loader: 'babel-loader' } },
+      { test: /\.(t|j)sx?$/, use: { loader: 'awesome-typescript-loader' } },
+      // addition - add source-map support
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
     ]
-
-  }
+  },
+  externals: {
+    "react": "React",
+    "react-dom": "ReactDOM",
+  },
+  // addition - add source-map support
+  devtool: "source-map"
 }
