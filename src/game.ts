@@ -2,6 +2,7 @@ import * as _ from "lodash";
 import * as PIXI from "pixi.js";
 import Ball from "./ball";
 import * as Config from "./config";
+import { IBalls, IPlayers, IUnit } from "./dodgeball";
 import GameBoard from "./game-board";
 import GameState from "./game-state";
 import Player from "./player";
@@ -53,9 +54,8 @@ const tiles = {
 };
 
 const gameState = new GameState(tiles);
-const players = {
-};
-const balls = {};
+const players: IPlayers = {};
+const balls: IBalls = {};
 
 const gameBoard = new GameBoard(stage, gameState, players, balls);
 

@@ -1,8 +1,8 @@
-import { Graphics, Sprite } from "pixi.js";
+import { Graphics, Sprite, Texture } from "pixi.js";
 import * as Config from "./config";
 import * as Utils from "./utils";
 
-class Ball {
+export default class Ball {
   public id: string;
   public sprite: Sprite;
   public graphic: Graphics;
@@ -38,13 +38,11 @@ class Ball {
     this.sprite = sprite;
   }
 
-  public circleTexture(hexColor) {
-    const graphic = new PIXI.Graphics();
+  public circleTexture(hexColor: number): Texture {
+    const graphic: Graphics = new PIXI.Graphics();
     graphic.beginFill(hexColor);
     return graphic
       .drawCircle(0, 0, (Config.TILE_SIZE / 4) - 5)
       .generateCanvasTexture();
   }
 }
-
-export default Ball;

@@ -1,13 +1,9 @@
-import {Back, Power4, TweenLite, Tween} from "gsap";
-import { Sprite, Graphics, Texture } from "pixi.js";
+import {Back, Power4, Tween, TweenLite} from "gsap";
+import { Graphics, Sprite, Texture } from "pixi.js";
 import Ball from "./ball";
 import * as Config from "./config";
+import { IOutcome } from "./dodgeball";
 import * as Utils from "./utils";
-
-interface IOutcome {
-  ball: undefined | Ball;
-  hit: undefined | boolean;
-}
 
 export default class Player {
   public x: number;
@@ -17,7 +13,7 @@ export default class Player {
   public sprite: Sprite;
   public team: string;
 
-  constructor(x: number, y: number, id :string, team: string, interactive) {
+  constructor(x: number, y: number, id: string, team: string, interactive) {
     const redCircle = this.rectangleTexture(0xFF0000);
     const blueCircle = this.rectangleTexture(0x0000FF);
     let graphic;
@@ -90,7 +86,7 @@ export default class Player {
   }
 
   public throwBallAt(player) {
-    const ball: undefined | Ball = this.ball;
+    const ball: Ball = this.ball!;
     console.log(player);
     const pixelPosition = Utils.tileToPixelPosition(player.x, player.y);
     TweenLite.fromTo(

@@ -1,23 +1,19 @@
-import {TweenLite} from "gsap";
+import { TweenLite } from "gsap";
 import { Container, DisplayObject, Graphics } from "pixi.js";
 import Ball from "./ball";
 import * as Config from "./config";
+import { IBalls, IPlayers, IUnit } from "./dodgeball";
 import GameState from "./game-state";
 import Player from "./player";
 import * as Utils from "./utils";
-
-interface IUnit {
-  x: number;
-  y: number;
-}
 
 export default class GameBoard {
   public tokenContainer: Container;
   public highlightContainer: Container;
   public stage: Container;
   public gameState: GameState;
-  public players: any[];
-  public balls: any[];
+  public players: any;
+  public balls: any;
   public actionCount: number;
   public eventData: undefined | any;
   public selectedPlayer: undefined | any;
@@ -25,7 +21,7 @@ export default class GameBoard {
   public sourceHighlight: Graphics;
   public selected: any;
 
-  constructor(stage, gameState, players, balls) {
+  constructor(stage: Container, gameState: GameState, players: IPlayers, balls: IBalls) {
     this.tokenContainer = new PIXI.Container();
     this.highlightContainer = new PIXI.Container();
     this.stage = stage;
@@ -68,7 +64,7 @@ export default class GameBoard {
           this.actionCount += 1;
           const pPlayer = this.players[player.id];
           const outcome = this.selectedPlayerObject().throwBallAt(pPlayer);
-          const ball = outcome.ball;
+          const ball = outcome.ball!;
           const unit = this.gameState.state.units[ball.id];
           unit.x = player.x;
           unit.y = player.y;
@@ -111,9 +107,9 @@ export default class GameBoard {
     this.actionCount += 1;
     const ball: undefined | Ball = this.gameState.getBall(x, y);
     if (ball !== undefined) {
-      const currentBall: DisplayObject = this.balls[ball.id];
+      const currentBall: Ball = this.balls[ball.id];
 
-      this.tokenContainer.removeChild(currentBall);
+      this.tokenContainer.removeChild(currentBall.sprite);
       const player = this.players[this.selectedPlayer.id];
       player.pickupBall(currentBall);
       this.selectedPlayer.hasBall = true;

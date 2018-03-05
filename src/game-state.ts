@@ -1,12 +1,8 @@
 import each from "lodash-es/each";
 import Ball from "./ball";
+import { IPlayers, IUnit } from "./dodgeball";
 import Player from "./player";
 import * as Utils from "./utils";
-
-interface IUnit {
-  x: number;
-  y: number;
-}
 
 class GameState {
   public state: any[any];

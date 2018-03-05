@@ -33202,6 +33202,8 @@ global.PIXI = exports; // eslint-disable-line
 var Ball = /** @class */ (function () {
     function Ball(x, y, id) {
         id = id;
+        x = x;
+        y = y;
         var greenCircle = this.circleTexture(0x00FF00);
         var graphic;
         graphic = greenCircle;
@@ -33329,7 +33331,7 @@ var GameBoard = /** @class */ (function () {
         var ball = this.gameState.getBall(x, y);
         if (ball !== undefined) {
             var currentBall = this.balls[ball.id];
-            this.tokenContainer.removeChild(currentBall);
+            this.tokenContainer.removeChild(currentBall.sprite);
             var player = this.players[this.selectedPlayer.id];
             player.pickupBall(currentBall);
             this.selectedPlayer.hasBall = true;
@@ -33421,6 +33423,7 @@ var GameState = /** @class */ (function () {
             unit.x = x;
             unit.y = y;
         }
+        return unit;
     };
     GameState.prototype.getBall = function (x, y) {
         var unit;
@@ -33536,7 +33539,9 @@ var Player = /** @class */ (function () {
         var pixelPosition = __WEBPACK_IMPORTED_MODULE_1__utils__["tileToPixelPosition"](player.x, player.y);
         __WEBPACK_IMPORTED_MODULE_0_gsap__["TweenLite"].fromTo(ball.sprite, 0.5, { x: this.sprite.x, y: this.sprite.y }, { x: pixelPosition.x, y: pixelPosition.y, ease: __WEBPACK_IMPORTED_MODULE_0_gsap__["Power4"].easeOut });
         this.ball = undefined;
-        this.sprite.removeChild(ball.sprite);
+        if (ball) {
+            this.sprite.removeChild(ball.sprite);
+        }
         var r = Math.floor(Math.random() * 2);
         var outcome = { ball: ball, hit: undefined };
         if (r === 1) {
