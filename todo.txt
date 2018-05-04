@@ -6,6 +6,7 @@ have to have:
   - throwing
     - miss moves to different tile than defender
     - off board
+    - drop ball from target player when hit
   - limit player movement
   - two player
     - game server

@@ -33204,9 +33204,7 @@ var Ball = /** @class */ (function () {
         id = id;
         x = x;
         y = y;
-        var greenCircle = this.circleTexture(0x00FF00);
-        var graphic;
-        graphic = greenCircle;
+        var graphic = this.circleTexture(0x00FF00);
         var sprite = new PIXI.Sprite(graphic);
         sprite.anchor.set(0.5);
         var position = __WEBPACK_IMPORTED_MODULE_1__utils__["tileToPixelPosition"](x, y);
@@ -33248,7 +33246,6 @@ var Ball = /** @class */ (function () {
 
 var GameBoard = /** @class */ (function () {
     function GameBoard(stage, gameState, players, balls) {
-        var _this = this;
         this.tokenContainer = new PIXI.Container();
         this.highlightContainer = new PIXI.Container();
         this.stage = stage;
@@ -33261,9 +33258,9 @@ var GameBoard = /** @class */ (function () {
         stage.addChild(this.tokenContainer);
         this.eventData = undefined;
         this.selectedPlayer = undefined;
-        stage.on("click", function (event) { return _this.handleClickEvent(event); });
-        stage.on("touchend", function (event) { return _this.handleClickEvent(event); });
-        stage.on("mousemove", function () { return _this.handleMouseMove(); });
+        stage.on("click", this.handleClickEvent);
+        stage.on("touchend", this.handleClickEvent);
+        stage.on("mousemove", this.handleMouseMove);
     }
     GameBoard.prototype.handleClickEvent = function (event) {
         if (this.actionCount > 1) {

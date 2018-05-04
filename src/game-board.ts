@@ -8,18 +8,18 @@ import Player from "./player";
 import * as Utils from "./utils";
 
 export default class GameBoard {
-  public tokenContainer: Container;
-  public highlightContainer: Container;
-  public stage: Container;
-  public gameState: GameState;
-  public players: any;
-  public balls: any;
-  public actionCount: number;
-  public eventData: undefined | any;
-  public selectedPlayer: undefined | any;
-  public targetHighlight: Graphics;
-  public sourceHighlight: Graphics;
-  public selected: any;
+  private tokenContainer: Container;
+  private highlightContainer: Container;
+  private stage: Container;
+  private gameState: GameState;
+  private players: any;
+  private balls: any;
+  private actionCount: number;
+  private eventData: undefined | any;
+  private selectedPlayer: undefined | any;
+  private targetHighlight: Graphics;
+  private sourceHighlight: Graphics;
+  private selected: any;
 
   constructor(stage: Container, gameState: GameState, players: IPlayers, balls: IBalls) {
     this.tokenContainer = new PIXI.Container();
@@ -37,9 +37,9 @@ export default class GameBoard {
     this.eventData = undefined;
     this.selectedPlayer = undefined;
 
-    stage.on("click", (event) => this.handleClickEvent(event));
-    stage.on("touchend", (event) => this.handleClickEvent(event));
-    stage.on("mousemove", () => this.handleMouseMove());
+    stage.on("click", this.handleClickEvent);
+    stage.on("touchend", this.handleClickEvent);
+    stage.on("mousemove", this.handleMouseMove);
   }
 
   public handleClickEvent(event) {

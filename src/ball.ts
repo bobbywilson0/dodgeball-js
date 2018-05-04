@@ -5,7 +5,6 @@ import * as Utils from "./utils";
 export default class Ball {
   public id: string;
   public sprite: Sprite;
-  public graphic: Graphics;
   public x: number;
   public y: number;
 
@@ -14,10 +13,7 @@ export default class Ball {
     x = x;
     y = y;
 
-    const greenCircle = this.circleTexture(0x00FF00);
-    let graphic;
-
-    graphic = greenCircle;
+    const graphic = this.circleTexture(0x00FF00);
 
     const sprite = new PIXI.Sprite(graphic);
     sprite.anchor.set(0.5);

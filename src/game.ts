@@ -86,3 +86,13 @@ resize();
 document.body.appendChild(renderer.view);
 setup();
 animate();
+
+
+function newPlayer(boardX, boardY) {
+  return new Entity()
+    .addComponent(new PositionComponent(0, 0))
+    .addComponent(new TeamComponent('red'))
+    .addComponent(new SelectComponent(false))
+    .addComponent(new BallPossessionComponent(true))
+    .addComponent(new InteractiveComponent(true))
+}
